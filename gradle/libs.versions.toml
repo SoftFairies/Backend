@@ -1,0 +1,40 @@
+[versions]
+# Plugins
+springBoot = "4.0.6"
+dependencyManagement = "1.1.7"
+
+springSecurity = "6.2.1"
+javaJwt = "4.4.0"
+
+# Libraries
+dotenv = "3.0.0"
+mapstruct = "1.5.5.Final"
+lombok = "1.18.30"
+lombokMapstruct = "0.2.0"
+springdoc = "2.8.5"
+
+jsoup = "1.17.2"
+
+[libraries]
+# Spring Boot Starters
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+spring-boot-starter-webmvc = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc" }
+
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "javaJwt" }
+
+# Utils
+dotenv-java = { group = "io.github.cdimascio", name = "dotenv-java", version.ref = "dotenv" }
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombokMapstruct" }
+springdoc-openapi = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+postgresql = { group = "org.postgresql", name = "postgresql" }
+
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }

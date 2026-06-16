@@ -1,0 +1,60 @@
+plugins {
+	id 'java'
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.dependency.management)
+}
+
+group = 'com.fairies'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Boot Starters
+	implementation libs.spring.boot.starter.data.jpa
+	implementation libs.spring.boot.starter.validation
+	implementation libs.spring.boot.starter.webmvc
+
+	// Seguridad: Spring Security y JWT
+	implementation libs.spring.boot.starter.security
+	implementation libs.java.jwt
+
+	// Documentación Swagger/OpenAPI
+	implementation libs.springdoc.openapi
+
+	// Base de datos (Driver)
+	runtimeOnly libs.postgresql
+
+	// Variables de entorno (.env)
+	implementation libs.dotenv.java
+
+	// Mappers (MapStruct)
+	implementation libs.mapstruct
+	annotationProcessor libs.mapstruct.processor
+
+	// Boilerplate (Lombok) y su unión con MapStruct
+	compileOnly libs.lombok
+	annotationProcessor libs.lombok
+	annotationProcessor libs.lombok.mapstruct.binding
+
+	//Araña
+	implementation libs.jsoup
+
+	// Dependencias para Pruebas (Testing)
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly libs.lombok
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testAnnotationProcessor libs.lombok
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
