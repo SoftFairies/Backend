@@ -1,8 +1,8 @@
 package com.fairies.api.proyecto.modules.picture.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.picture.domain.model.Picture;
 import com.fairies.api.proyecto.modules.picture.infrastructure.persistence.PictureRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +19,6 @@ public class GetPictureByIdUseCase {
             throw new IllegalArgumentException("El ID de la imagen no puede ser nulo.");
         }
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Picture with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Picture with ID " + id + " not found"));
     }
 }

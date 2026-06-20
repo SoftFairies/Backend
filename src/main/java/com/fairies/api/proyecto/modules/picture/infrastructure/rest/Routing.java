@@ -38,7 +38,7 @@ public class Routing {
 
 
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new picture")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PictureResponse create(@Valid @ModelAttribute PictureRequests request) {
@@ -47,14 +47,12 @@ public class Routing {
 
 
     @GetMapping
-    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all pictures with pagination")
     public Page<PictureResponse> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return getAllUseCase.execute(pageable).map(mapper::toResponse);
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get picture by ID")
     public PictureResponse getById(@PathVariable Long id) {
         return mapper.toResponse(getByIdUseCase.execute(id));
