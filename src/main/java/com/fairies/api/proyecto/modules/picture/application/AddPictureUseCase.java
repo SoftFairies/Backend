@@ -18,23 +18,20 @@ public class AddPictureUseCase {
         this.storageService = storageService;
     }
 
-    public Picture execute(MultipartFile file, String name) {
+    public Picture execute(MultipartFile file, Picture picture) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("El archivo de imagen es mandatorio y no puede estar vacío.");
+            throw new IllegalArgumentException("El archivo de imagen es obligatorio para la creación.");
         }
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("El nombre del catálogo es obligatorio.");
+        if (picture == null || picture.getName() == null || picture.getName().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio.");
         }
 
         try {
             StorageResponse uploadResult = storageService.upload(file);
 
-            Picture picture = Picture.builder()
-                    .name(name)
-                    .url(uploadResult.url())
-                    .publicId(uploadResult.publicId())
-                    .deleted(false)
-                    .build();
+            picture.setUrl(uploadResult.url());
+            picture.setPublicId(uploadResult.publicId());
+            picture.setDeleted(false);
 
             return repository.save(picture);
 

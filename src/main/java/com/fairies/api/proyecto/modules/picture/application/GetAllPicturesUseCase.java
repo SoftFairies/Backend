@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GetAllPicturesUseCase {
-
     private final PictureRepository repository;
 
     public GetAllPicturesUseCase(PictureRepository repository) {
