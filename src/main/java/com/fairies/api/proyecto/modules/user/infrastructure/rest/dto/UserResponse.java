@@ -7,5 +7,8 @@ public record UserResponse(
         String name,
         String lastname,
         String email,
-        String roleName
+        String roleName,
+        Long pictureId,
+        String pictureUrl,
+        boolean active
 ) {}
