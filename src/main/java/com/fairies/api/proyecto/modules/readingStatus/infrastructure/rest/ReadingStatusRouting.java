@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class ReadingStatusRouting {
 
     @PostMapping
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new readingStatus")
     public ReadingStatusResponse create(@Valid @RequestBody CatalogPlainRequest request) {
         ReadingStatus domain = mapper.toDomain(request);
@@ -68,7 +69,7 @@ public class ReadingStatusRouting {
 
     @PutMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates an existing readingStatus")
     public ReadingStatusResponse update(@PathVariable Long id, @Valid @RequestBody UpdateCatalogPlainRequest request) {
         ReadingStatus updatedFields = mapper.toDomain(request);
@@ -78,7 +79,7 @@ public class ReadingStatusRouting {
 
     @DeleteMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete readingStatus by ID")
     public void delete(@PathVariable Long id) {

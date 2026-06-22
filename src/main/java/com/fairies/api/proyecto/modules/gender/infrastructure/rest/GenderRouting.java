@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class GenderRouting {
 
     @PostMapping
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new gender")
     public GenderResponse create(@Valid @RequestBody CatalogPlainRequest request) {
         Gender genderDomain = mapper.toDomain(request);
@@ -66,7 +67,7 @@ public class GenderRouting {
 
     @PutMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates an existing gender")
     public GenderResponse update(@PathVariable Long id, @Valid @RequestBody UpdateCatalogPlainRequest request) {
         Gender updatedFields = mapper.toDomain(request);
@@ -76,7 +77,7 @@ public class GenderRouting {
 
     @DeleteMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete gender by ID")
     public void delete(@PathVariable Long id) {
         deleteUseCase.execute(id);

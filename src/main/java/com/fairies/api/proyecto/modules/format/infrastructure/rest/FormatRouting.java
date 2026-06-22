@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -39,7 +40,7 @@ public class FormatRouting {
 
     @PostMapping
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new format")
     public FormatResponse create(@Valid @RequestBody CatalogPlainRequest request) {
         return addUseCase.execute(request);
@@ -59,7 +60,7 @@ public class FormatRouting {
 
     @PutMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Updates an existing format")
     public FormatResponse update(@PathVariable Long id, @Valid @RequestBody UpdateCatalogPlainRequest request) {
         return updateUseCase.execute(id, request);
@@ -67,7 +68,7 @@ public class FormatRouting {
 
     @DeleteMapping("/{id}")
     @Transactional
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete format by ID")
     public void delete(@PathVariable Long id) {
         deleteUseCase.execute(id);
