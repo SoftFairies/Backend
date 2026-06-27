@@ -1,0 +1,81 @@
+package com.fairies.api.proyecto.modules.book.infrastructure.rest;
+
+import com.fairies.api.proyecto.modules.book.application.*;
+import com.fairies.api.proyecto.modules.book.domain.model.Book;
+import com.fairies.api.proyecto.modules.book.infrastructure.rest.dto.BookRequest;
+import com.fairies.api.proyecto.modules.book.infrastructure.rest.dto.BookResponse;
+import com.fairies.api.proyecto.modules.book.infrastructure.rest.mapper.BookMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("api/v1/books")
+public class BookRouting {
+
+    private final AddBookUseCase addUseCase;
+    private final GetAllBookUseCase getAllUseCase;
+    private final GetByIdBookUseCase getByIdUseCase;
+    private final UpdateBookUseCase updateUseCase;
+    private final DeleteBookUseCase deleteUseCase;
+    private final BookMapper mapper;
+
+    public BookRouting(
+            AddBookUseCase addUseCase,
+            GetAllBookUseCase getAllUseCase,
+            GetByIdBookUseCase getByIdUseCase,
+            UpdateBookUseCase updateUseCase,
+            DeleteBookUseCase deleteUseCase,
+            BookMapper mapper
+    ) {
+        this.addUseCase = addUseCase;
+        this.getAllUseCase = getAllUseCase;
+        this.getByIdUseCase = getByIdUseCase;
+        this.updateUseCase = updateUseCase;
+        this.deleteUseCase = deleteUseCase;
+        this.mapper = mapper;
+    }
+
+    /*
+    @PostMapping
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Creates a new book")
+    public BookResponse create(@Valid @RequestBody BookRequest request) {
+        Book domain = mapper.toDomain(request);
+        Book saved = addUseCase.execute(domain);
+        return mapper.toResponse(saved);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get book by ID")
+    public BookResponse getById(@PathVariable UUID id) {
+        Book entity = getByIdUseCase.execute(id);
+        return mapper.toResponse(entity);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Updates an existing book")
+    public BookResponse update(@PathVariable UUID id, @Valid @RequestBody BookRequest request) {
+        Book updatedFields = mapper.toDomain(request);
+        Book updated = updateUseCase.execute(id, updatedFields);
+        return mapper.toResponse(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete book by ID")
+    public void delete(@PathVariable UUID id) {
+        deleteUseCase.execute(id);
+    }
+     */
+}
