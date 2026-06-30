@@ -15,6 +15,8 @@ springdoc = "2.8.5"
 
 jsoup = "1.17.2"
 
+cloudinary = "1.38.0"
+
 [libraries]
 # Spring Boot Starters
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
@@ -34,6 +36,9 @@ springdoc-openapi = { group = "org.springdoc", name = "springdoc-openapi-starter
 postgresql = { group = "org.postgresql", name = "postgresql" }
 
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+
+cloudinary-core = { group = "com.cloudinary", name = "cloudinary-core", version.ref = "cloudinary" }
+cloudinary-http = { group = "com.cloudinary", name = "cloudinary-http44", version.ref = "cloudinary" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
