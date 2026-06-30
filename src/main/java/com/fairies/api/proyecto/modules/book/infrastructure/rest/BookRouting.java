@@ -22,6 +22,7 @@ public class BookRouting {
     private final GetAllBookUseCase getAllUseCase;
     private final GetByIdBookUseCase getByIdUseCase;
     private final DeleteBookUseCase deleteUseCase;
+    private final UpdateBookUseCase updateUseCase;
     private final BookMapper mapper;
 
     public BookRouting(
@@ -29,12 +30,14 @@ public class BookRouting {
             GetAllBookUseCase getAllUseCase,
             GetByIdBookUseCase getByIdUseCase,
             DeleteBookUseCase deleteUseCase,
+            UpdateBookUseCase updateUseCase,
             BookMapper mapper
     ) {
         this.addUseCase = addUseCase;
         this.getAllUseCase = getAllUseCase;
         this.getByIdUseCase = getByIdUseCase;
         this.deleteUseCase = deleteUseCase;
+        this.updateUseCase = updateUseCase;
         this.mapper = mapper;
     }
 
@@ -58,6 +61,15 @@ public class BookRouting {
     @Operation(summary = "Get all books paginated")
     public Page<BookResponse> getAll(@PageableDefault(size = 10) Pageable pageable) {
         return getAllUseCase.execute(pageable).map(mapper::toResponse);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update book by ID")
+    public BookResponse update(@PathVariable UUID id, @Valid @RequestBody BookRequest request) {
+        Book domain = mapper.toDomain(request);
+        Book updated = updateUseCase.execute(id, domain);
+        return mapper.toResponse(updated);
     }
 
     @DeleteMapping("/{id}")

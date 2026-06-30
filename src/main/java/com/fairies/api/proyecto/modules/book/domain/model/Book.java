@@ -1,5 +1,8 @@
 package com.fairies.api.proyecto.modules.book.domain.model;
 
+import com.fairies.api.proyecto.modules.author.domain.model.Author;
+import com.fairies.api.proyecto.modules.format.domain.model.Format;
+import com.fairies.api.proyecto.modules.gender.domain.model.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -29,9 +32,9 @@ public class Book {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     private UUID id;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "format_id", nullable = false)
-//    private Format format;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "format_id", nullable = false)
+    private Format format;
 
     @Column(length = 50, unique = true)
     private String isbn;
@@ -51,21 +54,21 @@ public class Book {
     @Column(nullable = false)
     private String coverValue;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "book_authors",
-//            joinColumns = @JoinColumn(name = "book_id"),
-//            inverseJoinColumns = @JoinColumn(name = "author_id")
-//    )
-//    private Set<Author> authors;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "book_authors",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "book_genres",
-//            joinColumns = @JoinColumn(name = "book_id"),
-//            inverseJoinColumns = @JoinColumn(name = "genre_id")
-//    )
-//    private Set<Gender> genres;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "book_genres",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "gender_id")
+    )
+    private Set<Gender> genres;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
