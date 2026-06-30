@@ -48,6 +48,10 @@ dependencies {
 	//Araña
 	implementation libs.jsoup
 
+	//Cloudinary
+	implementation(libs.cloudinary.core)
+	implementation(libs.cloudinary.http)
+
 	// Dependencias para Pruebas (Testing)
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly libs.lombok
