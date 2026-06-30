@@ -49,8 +49,16 @@ public class Auth0JwtService implements JwtService {
 
     @Override
     public UUID getUserIdFromToken(String token) {
-        DecodedJWT decodedJWT = JWT.decode(token);
+        String rawToken = cleanToken(token);
+        DecodedJWT decodedJWT = JWT.decode(rawToken);
         String userIdStr = decodedJWT.getSubject();
         return UUID.fromString(userIdStr);
+    }
+
+    private String cleanToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7).trim();
+        }
+        return token != null ? token.trim() : "";
     }
 }
