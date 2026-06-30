@@ -5,15 +5,18 @@ import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class GetAllBookUseCase {
+
     private final BookRepository repository;
 
     public GetAllBookUseCase(BookRepository repository) {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public Page<Book> execute(Pageable pageable) {
         return repository.findAll(pageable);
     }

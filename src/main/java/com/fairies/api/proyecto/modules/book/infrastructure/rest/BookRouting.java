@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ public class BookRouting {
     private final AddBookUseCase addUseCase;
     private final GetAllBookUseCase getAllUseCase;
     private final GetByIdBookUseCase getByIdUseCase;
-    private final UpdateBookUseCase updateUseCase;
     private final DeleteBookUseCase deleteUseCase;
     private final BookMapper mapper;
 
@@ -30,21 +28,17 @@ public class BookRouting {
             AddBookUseCase addUseCase,
             GetAllBookUseCase getAllUseCase,
             GetByIdBookUseCase getByIdUseCase,
-            UpdateBookUseCase updateUseCase,
             DeleteBookUseCase deleteUseCase,
             BookMapper mapper
     ) {
         this.addUseCase = addUseCase;
         this.getAllUseCase = getAllUseCase;
         this.getByIdUseCase = getByIdUseCase;
-        this.updateUseCase = updateUseCase;
         this.deleteUseCase = deleteUseCase;
         this.mapper = mapper;
     }
 
-    /*
     @PostMapping
-    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Creates a new book")
     public BookResponse create(@Valid @RequestBody BookRequest request) {
@@ -60,22 +54,16 @@ public class BookRouting {
         return mapper.toResponse(entity);
     }
 
-    @PutMapping("/{id}")
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Updates an existing book")
-    public BookResponse update(@PathVariable UUID id, @Valid @RequestBody BookRequest request) {
-        Book updatedFields = mapper.toDomain(request);
-        Book updated = updateUseCase.execute(id, updatedFields);
-        return mapper.toResponse(updated);
+    @GetMapping
+    @Operation(summary = "Get all books paginated")
+    public Page<BookResponse> getAll(@PageableDefault(size = 10) Pageable pageable) {
+        return getAllUseCase.execute(pageable).map(mapper::toResponse);
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete book by ID")
     public void delete(@PathVariable UUID id) {
         deleteUseCase.execute(id);
     }
-     */
 }
