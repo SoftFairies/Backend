@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.user.domain.model;
 
+import com.fairies.api.proyecto.modules.picture.domain.model.Picture;
 import jakarta.persistence.*;
 import lombok.*;
 
