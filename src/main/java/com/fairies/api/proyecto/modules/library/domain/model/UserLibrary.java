@@ -1,6 +1,7 @@
 package com.fairies.api.proyecto.modules.library.domain.model;
 
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
+import com.fairies.api.proyecto.modules.readingStatus.domain.model.ReadingStatus;
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,9 +32,9 @@ public class UserLibrary {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "reading_status_id", nullable = false)
-//    private ReadingStatus readingStatus;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reading_status_id", nullable = false)
+    private ReadingStatus readingStatus;
 
     @Column(nullable = false)
     @Builder.Default

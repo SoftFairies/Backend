@@ -1,32 +1,47 @@
 package com.fairies.api.proyecto.modules.library.application;
 
-import com.fairies.api.proyecto.modules.book.application.AddBookUseCase;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
+import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.fairies.api.proyecto.modules.user.domain.model.User;
+import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
+@Component
 public class AddLibraryUseCase {
 
     private final LibraryRepository libraryRepository;
-    private final AddBookUseCase addBookUseCase;
+    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
+
+    public AddLibraryUseCase(
+            LibraryRepository libraryRepository,
+            BookRepository bookRepository,
+            UserRepository userRepository
+    ) {
+        this.libraryRepository = libraryRepository;
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional
-    public UserLibrary execute(UserLibrary userLibrary) {
-        Book bookToLink = userLibrary.getBook();
+    public void execute(UserLibrary userLibrary, Book bookEntity, UUID userId) {
+        // 1. Ensure the Book is persisted/found
+        Book book = bookRepository.findByIsbn(bookEntity.getIsbn())
+                .orElseGet(() -> bookRepository.save(bookEntity));
 
-        // Si el libro es Just-In-Time (no tiene ID), el módulo de libros se encarga de guardarlo y resolver dependencias
-        if (bookToLink.getId() == null) {
-            bookToLink = addBookUseCase.execute(bookToLink);
-            userLibrary.setBook(bookToLink);
-        }
+        // 2. Retrieve the User entity (Example: using a userRepository)
+        // You must inject/use your UserRepository here
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Evitar duplicados de la estantería del usuario
-        return libraryRepository.findByUserIdAndBookId(userLibrary.getUser().getId(), userLibrary.getBook().getId())
-                .orElseGet(() -> libraryRepository.save(userLibrary));
+        // 3. Set the full entities instead of IDs
+        userLibrary.setUser(user);
+        userLibrary.setBook(book);
+
+        libraryRepository.save(userLibrary);
     }
 }
