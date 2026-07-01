@@ -13,7 +13,7 @@ public interface LibraryMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "book", ignore = true)
-    @Mapping(target = "readingStatus", ignore = true) // Also ignore this if you map it manually
+    @Mapping(target = "readingStatus", ignore = true)
     UserLibrary toEntity(LibraryEnrollmentRequest request);
 
     @Mapping(target = "id", ignore = true)

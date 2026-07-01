@@ -1,6 +1,7 @@
 package com.fairies.api.proyecto.modules.library.infrastructure.rest;
 
 import com.fairies.api.proyecto.common.application.security.JwtService;
+import com.fairies.api.proyecto.modules.book.application.AddBookUseCase;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.library.application.*;
 import com.fairies.api.proyecto.modules.library.domain.model.UserBookCustomization;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class LibraryRouting {
 
     private final AddLibraryUseCase addUseCase;
+    private final AddBookUseCase addBookUseCase;
     private final GetAllLibraryUseCase getAllUseCase;
     private final UpdateLibraryUseCase updateUseCase;
     private final DeleteLibraryUseCase deleteUseCase;
@@ -38,9 +40,25 @@ public class LibraryRouting {
             @RequestHeader("Authorization") String authHeader
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        UserLibrary userLibrary = mapper.toEntity(request);
-        Book bookEntity = mapper.toBook(request.bookData());
-        addUseCase.execute(userLibrary, bookEntity, userId);
+        UUID bookId;
+
+        // 1. Obtener o crear el libro
+        if (request.bookId() != null) {
+            bookId = request.bookId();
+        } else {
+            Book newBook = addBookUseCase.execute(mapper.toBook(request.bookData()));
+            bookId = newBook.getId();
+        }
+
+        CreateLibraryEntryCommand command = new CreateLibraryEntryCommand(
+                userId,
+                bookId,
+                request.readingStatusId(),
+                request.currentPage()
+        );
+
+        addUseCase.execute(command);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

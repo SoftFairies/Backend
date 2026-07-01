@@ -2,9 +2,11 @@ package com.fairies.api.proyecto.modules.library.infrastructure.rest.dto;
 
 import com.fairies.api.proyecto.modules.book.infrastructure.rest.dto.BookRequest;
 
+import java.util.UUID;
+
 public record LibraryEnrollmentRequest(
-        String externalId,
+        UUID bookId,
         BookRequest bookData,
-        String readingStatusId,
+        Long readingStatusId,
         int currentPage
 ) {}
