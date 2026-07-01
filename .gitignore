@@ -39,3 +39,4 @@ out/
 .env
 Dockerfile
 .dockerignore
+generate-feature.sh
