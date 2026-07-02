@@ -37,3 +37,6 @@ out/
 .vscode/
 
 .env
+Dockerfile
+.dockerignore
+generate-feature.sh
