@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "reading_sessions") // Nombre en minúsculas y plural conforme a estándares
+@Table(name = "reading_sessions")
 @EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "UPDATE readings_sessions SET deleted = true, deleted_at = NOW() WHERE sesion_id = ?")
 @SQLRestriction("deleted = false")

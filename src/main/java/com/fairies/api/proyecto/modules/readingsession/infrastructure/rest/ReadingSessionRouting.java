@@ -27,7 +27,7 @@ public class ReadingSessionRouting {
 
     @PostMapping
     @Transactional
-    //@PreAuthorize("isAuthenticated()") // Cambia el rol según los requisitos de tu negocio
+    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Creates a new reading session")
     public ReadingSessionResponse create(@Valid @RequestBody ReadingSessionResponse request) {

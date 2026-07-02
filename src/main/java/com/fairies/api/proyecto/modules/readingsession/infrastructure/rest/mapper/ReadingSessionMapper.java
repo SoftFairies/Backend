@@ -18,5 +18,5 @@ public interface ReadingSessionMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    ReadingSession toDomain(ReadingSessionResponse response); // <-- CORREGIDO: Ahora acepta tu clase única
+    ReadingSession toDomain(ReadingSessionResponse response);
 }

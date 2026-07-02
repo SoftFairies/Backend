@@ -17,16 +17,12 @@ public class AddReadingSessionUseCase {
         if (session == null) {
             throw new IllegalArgumentException("La sesión de lectura no puede ser nula.");
         }
-        // Dentro de tu método execute...
         if (session.getUser() == null || session.getUser().getId() == null) {
             throw new IllegalArgumentException("El usuario es obligatorio.");
         }
-
-        // CORREGIDO: Ahora valida directamente el Long libroId
         if (session.getLibroId() == null) {
             throw new IllegalArgumentException("El libro es obligatorio.");
         }
-
         if (session.getMinutosLeidos() == null || session.getMinutosLeidos() <= 0) {
             throw new IllegalArgumentException("Los minutos leídos deben ser mayores a 0.");
         }
@@ -34,7 +30,7 @@ public class AddReadingSessionUseCase {
             throw new IllegalArgumentException("Las páginas avanzadas no pueden ser negativas.");
         }
 
-        // REGLA DE NEGOCIO: Coherencia de páginas por minuto (Máximo 2 páginas por minuto)
+        //Coherencia de páginas por minuto máximo 2 páginas por minuto
         double paginasPorMinuto = (double) session.getPaginasAvanzadas() / session.getMinutosLeidos();
         if (paginasPorMinuto > 2.0) {
             throw new IllegalArgumentException(
