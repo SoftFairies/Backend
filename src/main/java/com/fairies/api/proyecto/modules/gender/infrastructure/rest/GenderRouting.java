@@ -7,6 +7,7 @@ import com.fairies.api.proyecto.modules.gender.domain.model.Gender;
 import com.fairies.api.proyecto.modules.gender.infrastructure.rest.dto.GenderResponse;
 import com.fairies.api.proyecto.modules.gender.infrastructure.rest.mapper.GenderMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/genders")
 public class GenderRouting {
 
@@ -25,22 +27,6 @@ public class GenderRouting {
     private final UpdateGenderUseCase updateUseCase;
     private final DeleteGenderUseCase deleteUseCase;
     private final GenderMapper mapper;
-
-    public GenderRouting(
-            AddGenderUseCase addUseCase,
-            GetAllGenderUseCase getAllUseCase,
-            GetByIdGenderUseCase getByIdUseCase,
-            UpdateGenderUseCase updateUseCase,
-            DeleteGenderUseCase deleteUseCase,
-            GenderMapper mapper
-    ) {
-        this.addUseCase = addUseCase;
-        this.getAllUseCase = getAllUseCase;
-        this.getByIdUseCase = getByIdUseCase;
-        this.updateUseCase = updateUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     @Transactional
@@ -53,9 +39,11 @@ public class GenderRouting {
     }
 
     @GetMapping
-    @Operation(summary = "Get all genders with pagination")
-    public Page<GenderResponse> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return getAllUseCase.execute(pageable).map(mapper::toResponse);
+    @Operation(summary = "Get all genders with pagination and optional search")
+    public Page<GenderResponse> getAll(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return getAllUseCase.execute(query, pageable).map(mapper::toResponse);
     }
 
     @GetMapping("/{id}")
