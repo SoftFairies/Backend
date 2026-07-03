@@ -7,6 +7,7 @@ import com.fairies.api.proyecto.modules.author.domain.model.Author;
 import com.fairies.api.proyecto.modules.author.infrastructure.rest.dto.AuthorResponse;
 import com.fairies.api.proyecto.modules.author.infrastructure.rest.mapper.AuthorMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/authors")
 public class AuthorRouting {
 
@@ -27,22 +29,6 @@ public class AuthorRouting {
     private final UpdateAuthorUseCase updateUseCase;
     private final DeleteAuthorUseCase deleteUseCase;
     private final AuthorMapper mapper;
-
-    public AuthorRouting(
-            AddAuthorUseCase addUseCase,
-            GetAllAuthorUseCase getAllUseCase,
-            GetByIdAuthorUseCase getByIdUseCase,
-            UpdateAuthorUseCase updateUseCase,
-            DeleteAuthorUseCase deleteUseCase,
-            AuthorMapper mapper
-    ) {
-        this.addUseCase = addUseCase;
-        this.getAllUseCase = getAllUseCase;
-        this.getByIdUseCase = getByIdUseCase;
-        this.updateUseCase = updateUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     @Transactional
@@ -55,9 +41,11 @@ public class AuthorRouting {
     }
 
     @GetMapping
-    @Operation(summary = "Get all authors with pagination")
-    public Page<AuthorResponse> getAll(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return getAllUseCase.execute(pageable).map(mapper::toResponse);
+    @Operation(summary = "Get all authors with pagination and optional search")
+    public Page<AuthorResponse> getAll(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return getAllUseCase.execute(query, pageable).map(mapper::toResponse);
     }
 
     @GetMapping("/{id}")

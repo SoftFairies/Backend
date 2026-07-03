@@ -14,7 +14,10 @@ public class GetAllAuthorUseCase {
         this.repository = repository;
     }
 
-    public Page<Author> execute(Pageable pageable) {
+    public Page<Author> execute(String query, Pageable pageable) {
+        if (query != null && !query.isBlank()) {
+            return repository.findByNameContainingIgnoreCase(query, pageable);
+        }
         return repository.findAll(pageable);
     }
 }

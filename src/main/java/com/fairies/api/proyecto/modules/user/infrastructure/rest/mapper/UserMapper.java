@@ -36,6 +36,5 @@ public interface UserMapper {
     @Mapping(target = "profilePicture", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(source = "pictureId", target = "profilePicture.id")
     void updateFromRequest(UpdateUserRequest request, @MappingTarget User target);
 }
