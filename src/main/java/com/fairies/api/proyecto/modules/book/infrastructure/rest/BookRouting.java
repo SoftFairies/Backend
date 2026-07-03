@@ -6,6 +6,7 @@ import com.fairies.api.proyecto.modules.book.infrastructure.rest.dto.BookRequest
 import com.fairies.api.proyecto.modules.book.infrastructure.rest.dto.BookResponse;
 import com.fairies.api.proyecto.modules.book.infrastructure.rest.mapper.BookMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/books")
 public class BookRouting {
 
@@ -24,22 +26,6 @@ public class BookRouting {
     private final DeleteBookUseCase deleteUseCase;
     private final UpdateBookUseCase updateUseCase;
     private final BookMapper mapper;
-
-    public BookRouting(
-            AddBookUseCase addUseCase,
-            GetAllBookUseCase getAllUseCase,
-            GetByIdBookUseCase getByIdUseCase,
-            DeleteBookUseCase deleteUseCase,
-            UpdateBookUseCase updateUseCase,
-            BookMapper mapper
-    ) {
-        this.addUseCase = addUseCase;
-        this.getAllUseCase = getAllUseCase;
-        this.getByIdUseCase = getByIdUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.updateUseCase = updateUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -58,9 +44,11 @@ public class BookRouting {
     }
 
     @GetMapping
-    @Operation(summary = "Get all books paginated")
-    public Page<BookResponse> getAll(@PageableDefault(size = 10) Pageable pageable) {
-        return getAllUseCase.execute(pageable).map(mapper::toResponse);
+    @Operation(summary = "Get all books paginated (with optional search)")
+    public Page<BookResponse> getAll(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return getAllUseCase.execute(query, pageable).map(mapper::toResponse);
     }
 
     @PutMapping("/{id}")
