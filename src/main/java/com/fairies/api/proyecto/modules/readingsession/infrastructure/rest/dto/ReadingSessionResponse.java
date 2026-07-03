@@ -1,15 +1,16 @@
 package com.fairies.api.proyecto.modules.readingsession.infrastructure.rest.dto;
 
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import com.fairies.api.proyecto.modules.book.domain.model.Book; // 🔄 Ruta exacta de su entidad Book
 import java.time.LocalDate;
-import java.util.UUID;
+import lombok.Data;
 
-public record ReadingSessionResponse(
-        @NotNull UUID usuarioId,
-        @NotNull Long libroId,
-        @NotNull LocalDate fecha,
-        @NotNull @Positive Long minutosLeidos,
-        @NotNull Long paginasAvanzadas
-) {}
+@Data
+public class ReadingSessionResponse {
+    private Long id;
+    private String usuarioId;
+    private Book book; // 🔄 Cambiado a Book
+    private LocalDate fecha;
+    private Integer minutesLeidos;
+    private Integer paginasAvanzadas;
+}
