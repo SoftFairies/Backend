@@ -1,6 +1,6 @@
 package com.fairies.api.proyecto.modules.readingsession.domain.model;
 
-import com.fairies.api.proyecto.modules.book.domain.model.Book; // 🔄 Import del Book real
+import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.*;

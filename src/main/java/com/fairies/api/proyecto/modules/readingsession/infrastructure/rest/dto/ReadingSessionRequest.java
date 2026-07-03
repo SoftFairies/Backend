@@ -3,7 +3,7 @@ package com.fairies.api.proyecto.modules.readingsession.infrastructure.rest.dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.UUID; // 🔄 Importante
+import java.util.UUID;
 import lombok.Data;
 
 @Data
