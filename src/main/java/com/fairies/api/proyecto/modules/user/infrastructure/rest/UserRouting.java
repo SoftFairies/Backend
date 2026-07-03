@@ -97,9 +97,7 @@ public class UserRouting {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
         userMapper.updateFromRequest(request, userToUpdate);
-
-        User updatedUser = updateUseCase.execute(userToUpdate);
-
+        User updatedUser = updateUseCase.execute(userToUpdate, request.pictureId());
         return userMapper.toResponse(updatedUser);
     }
 
