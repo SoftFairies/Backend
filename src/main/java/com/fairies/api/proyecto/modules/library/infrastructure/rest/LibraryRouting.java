@@ -4,6 +4,7 @@ import com.fairies.api.proyecto.common.application.security.JwtService;
 import com.fairies.api.proyecto.modules.book.application.AddBookUseCase;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.library.application.*;
+import com.fairies.api.proyecto.modules.library.domain.model.LibraryNote;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.*;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.mapper.LibraryMapper;
@@ -27,11 +28,14 @@ import java.util.UUID;
 public class LibraryRouting {
 
     private final AddLibraryUseCase addUseCase;
-    private final AddBookUseCase addBookUseCase;
     private final GetAllLibraryUseCase getAllUseCase;
     private final UpdateLibraryUseCase updateUseCase;
     private final DeleteLibraryUseCase deleteUseCase;
+
     private final GetByIdUserUseCase getByIdUserUseCase;
+
+    private final AddNoteUseCase addNoteUseCase;
+    private final GetNotesByLibraryUseCase getNotesUseCase;
 
     private final JwtService jwtService;
     private final LibraryMapper mapper;
@@ -77,5 +81,33 @@ public class LibraryRouting {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
         deleteUseCase.execute(userId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{libraryId}/notes")
+    public ResponseEntity<LibraryNoteResponse> addNote(
+            @PathVariable UUID libraryId,
+            @Valid @RequestBody LibraryNoteRequest request
+    ) {
+        LibraryNote savedNote = addNoteUseCase.execute(libraryId, request);
+
+        LibraryNoteResponse responseDto = mapper.toNoteResponse(savedNote);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @GetMapping("/{libraryId}/notes")
+    public ResponseEntity<List<LibraryNoteResponse>> getNotes(
+            @PathVariable UUID libraryId,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        UUID userId = jwtService.getUserIdFromToken(authHeader);
+
+        var notes = getNotesUseCase.execute(libraryId);
+
+        var response = notes.stream()
+                .map(mapper::toNoteResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }
