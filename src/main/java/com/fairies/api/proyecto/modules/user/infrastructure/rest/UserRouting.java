@@ -1,6 +1,7 @@
 package com.fairies.api.proyecto.modules.user.infrastructure.rest;
 
 import com.fairies.api.proyecto.common.application.security.JwtService;
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.auth.infrastructure.rest.dto.AuthResponse;
 import com.fairies.api.proyecto.modules.auth.infrastructure.rest.dto.RegisterRequest;
 import com.fairies.api.proyecto.modules.user.application.*;
@@ -9,6 +10,7 @@ import com.fairies.api.proyecto.modules.user.infrastructure.rest.dto.UpdateUserR
 import com.fairies.api.proyecto.modules.user.infrastructure.rest.dto.UserResponse;
 import com.fairies.api.proyecto.modules.user.infrastructure.rest.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/users")
+@RequiredArgsConstructor
 public class UserRouting {
 
     private final AddUserUseCase addUserUseCase;
@@ -31,24 +34,6 @@ public class UserRouting {
     private final DeleteUserUseCase deleteUseCase;
     private final JwtService jwtService;
     private final UserMapper userMapper;
-
-    public UserRouting(
-            AddUserUseCase addUserUseCase,
-            GetAllUserUseCase getAllUserUseCase,
-            GetByIdUserUseCase getByIdUserUseCase,
-            UpdateUserUseCase updateUseCase,
-            DeleteUserUseCase deleteUseCase,
-            JwtService jwtService,
-            UserMapper userMapper
-    ) {
-        this.addUserUseCase = addUserUseCase;
-        this.getAllUserUseCase = getAllUserUseCase;
-        this.getByIdUserUseCase = getByIdUserUseCase;
-        this.updateUseCase = updateUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.jwtService = jwtService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping
     @Transactional
@@ -81,7 +66,22 @@ public class UserRouting {
     public UserResponse getById(@PathVariable UUID id) {
         return getByIdUserUseCase.execute(id)
                 .map(userMapper::toResponse)
-                .orElseThrow(() -> new IllegalArgumentException("User with ID " + id + " not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Updates a user by its ID (Admin only)")
+    public UserResponse update(@PathVariable UUID id, @Valid @RequestBody UpdateUserRequest request) {
+        User userToUpdate = getByIdUserUseCase.execute(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userMapper.updateFromRequest(request, userToUpdate);
+
+        User updatedUser = updateUseCase.execute(userToUpdate, request.pictureId(), request.password());
+
+        return userMapper.toResponse(updatedUser);
     }
 
     @PutMapping("/me")
@@ -94,12 +94,15 @@ public class UserRouting {
         UUID authenticatedUserId = jwtService.getUserIdFromToken(authHeader);
 
         User userToUpdate = getByIdUserUseCase.execute(authenticatedUserId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         userMapper.updateFromRequest(request, userToUpdate);
-        User updatedUser = updateUseCase.execute(userToUpdate, request.pictureId());
+
+        User updatedUser = updateUseCase.execute(userToUpdate, request.pictureId(), request.password());
+        System.out.println(updatedUser);
         return userMapper.toResponse(updatedUser);
     }
+
 
     @DeleteMapping("/me")
     @Transactional
@@ -116,7 +119,7 @@ public class UserRouting {
         UUID authenticatedUserId = jwtService.getUserIdFromToken(authHeader);
         return getByIdUserUseCase.execute(authenticatedUserId)
                 .map(userMapper::toResponse)
-                .orElseThrow(() -> new IllegalArgumentException("Your user not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Your user not found"));
     }
 
 }
