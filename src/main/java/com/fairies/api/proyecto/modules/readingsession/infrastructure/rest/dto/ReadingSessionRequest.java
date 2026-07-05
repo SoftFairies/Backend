@@ -1,6 +1,5 @@
 package com.fairies.api.proyecto.modules.readingsession.infrastructure.rest.dto;
 
-
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -17,8 +16,9 @@ public class ReadingSessionRequest {
     @NotNull(message = "La fecha es obligatoria.")
     private LocalDate fecha;
 
-    @NotNull(message = "Los minutos leídos son obligatorios.")
-    private Integer minutosLeidos;
+    // Cambiado de minutosLeidos a segundosLeidos
+    @NotNull(message = "Los segundos leídos son obligatorios.")
+    private Integer segundosLeidos;
 
     @NotNull(message = "Las páginas avanzadas son obligatorios.")
     private Integer paginasAvanzadas;

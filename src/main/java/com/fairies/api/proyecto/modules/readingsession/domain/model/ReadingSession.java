@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReadingSession {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +25,7 @@ public class ReadingSession {
     private Book book;
 
     private LocalDate fecha;
-    private Integer minutosLeidos;
+    @Column(name = "minutos_leidos") // Mantiene el mapeo actual con tu base de datos
+    private Integer segundosLeidos;
     private Integer paginasAvanzadas;
 }

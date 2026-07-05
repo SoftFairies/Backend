@@ -16,8 +16,8 @@ public class AddReadingSessionUseCase {
         if (session.getBook() == null || session.getBook().getId() == null) {
             throw new IllegalArgumentException("El libro es obligatorio.");
         }
-        if (session.getMinutosLeidos() == null || session.getMinutosLeidos() <= 0) {
-            throw new IllegalArgumentException("Los minutos leídos deben ser mayores a 0.");
+        if (session.getSegundosLeidos() == null || session.getSegundosLeidos() <= 0) {
+            throw new IllegalArgumentException("Los segundos leídos deben ser mayores a 0.");
         }
         if (session.getPaginasAvanzadas() == null || session.getPaginasAvanzadas() < 0) {
             throw new IllegalArgumentException("Las páginas avanzadas no pueden ser negativas.");
