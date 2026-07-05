@@ -4,26 +4,18 @@ import com.fairies.api.proyecto.common.application.security.PasswordHasher;
 import com.fairies.api.proyecto.modules.user.domain.model.Role;
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class AddUserUseCase {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordHasher passwordHasher;
-
-    public AddUserUseCase(
-            UserRepository userRepository,
-            RoleRepository roleRepository,
-            PasswordHasher passwordHasher
-    ) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordHasher = passwordHasher;
-    }
 
     public User execute(User newUser) {
         if (newUser == null || newUser.getEmail() == null || newUser.getEmail().isBlank()) {
