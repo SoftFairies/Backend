@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +21,6 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
             "LOWER(b.isbn) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(a.name) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Book> searchBooks(@Param("query") String query, Pageable pageable);
+
+    List<Book> findAllByTitleContainingIgnoreCaseOrIsbnContainingIgnoreCase(String title, String isbn);
 }
