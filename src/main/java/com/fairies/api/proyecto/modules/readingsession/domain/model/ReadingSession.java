@@ -25,7 +25,7 @@ public class ReadingSession {
     private Book book;
 
     private LocalDate fecha;
-    @Column(name = "minutos_leidos") // Mantiene el mapeo actual con tu base de datos
+    @Column(name = "minutos_leidos")
     private Integer segundosLeidos;
     private Integer paginasAvanzadas;
 }

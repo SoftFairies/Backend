@@ -16,7 +16,6 @@ public class ReadingSessionRequest {
     @NotNull(message = "La fecha es obligatoria.")
     private LocalDate fecha;
 
-    // Cambiado de minutosLeidos a segundosLeidos
     @NotNull(message = "Los segundos leídos son obligatorios.")
     private Integer segundosLeidos;
 
