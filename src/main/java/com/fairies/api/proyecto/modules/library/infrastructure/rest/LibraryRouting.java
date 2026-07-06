@@ -29,6 +29,7 @@ public class LibraryRouting {
 
     private final AddLibraryUseCase addUseCase;
     private final GetAllLibraryUseCase getAllUseCase;
+    private final GetByIdLibraryUseCase getByIdLibraryUseCase;
     private final UpdateLibraryUseCase updateUseCase;
     private final DeleteLibraryUseCase deleteUseCase;
 
@@ -62,15 +63,25 @@ public class LibraryRouting {
         return ResponseEntity.ok(getAllUseCase.execute(userId, pageable).map(mapper::toResponse));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<LibraryEntryResponse> getById(
+            @PathVariable UUID id,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        UUID userId = jwtService.getUserIdFromToken(authHeader);
+        UserLibrary library = getByIdLibraryUseCase.execute(id, userId);
+        return ResponseEntity.ok(mapper.toResponse(library));
+    }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<LibraryEntryResponse> update(
             @PathVariable UUID id,
             @RequestBody UpdateLibraryEntryRequest request,
             @RequestHeader("Authorization") String authHeader
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        updateUseCase.execute(userId, id, request);
-        return ResponseEntity.noContent().build();
+        UserLibrary updatedLibrary = updateUseCase.execute(userId, id, request);
+        return ResponseEntity.ok(mapper.toResponse(updatedLibrary));
     }
 
     @DeleteMapping("/{id}")
