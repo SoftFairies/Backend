@@ -1,7 +1,6 @@
 package com.fairies.api.proyecto.modules.library.domain.model;
 
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
-import com.fairies.api.proyecto.modules.readingStatus.domain.model.ReadingStatus;
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,15 +8,15 @@ import org.hibernate.annotations.UuidGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_library", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "book_id"})
+@Table(name = "user_book_customizations", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "book_id"})
 })
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserLibrary {
+public class UserBookCustomization {
 
     @Id
     @GeneratedValue(generator = "uuid-v7")
@@ -28,23 +27,13 @@ public class UserLibrary {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reading_status_id", nullable = false)
-    private ReadingStatus readingStatus;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer currentChapter = 0;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer currentPage = 0;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean isFavorite = false;
+    private String customTitle;
+    private Integer customChapters;
+    private Integer customPages;
+    private String customCoverType;
+    private String customCoverValue;
 }

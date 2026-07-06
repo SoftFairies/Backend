@@ -9,17 +9,18 @@ import com.fairies.api.proyecto.modules.gender.infrastructure.persistence.Gender
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public class AddBookUseCase {
+public class UpdateBookUseCase {
 
     private final BookRepository bookRepository;
     private final FormatRepository formatRepository;
     private final AuthorRepository authorRepository;
     private final GenderRepository genderRepository;
 
-    public AddBookUseCase(
+    public UpdateBookUseCase(
             BookRepository bookRepository,
             FormatRepository formatRepository,
             AuthorRepository authorRepository,
@@ -32,34 +33,44 @@ public class AddBookUseCase {
     }
 
     @Transactional
-    public Book execute(Book book) {
-        if (book.getFormat() != null && book.getFormat().getId() != null) {
-            var format = formatRepository.findById(book.getFormat().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Formato no encontrado"));
-            book.setFormat(format);
+    public Book execute(UUID id, Book updatedFields) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo.");
         }
 
-        if (book.getAuthors() != null && !book.getAuthors().isEmpty()) {
-            var authors = book.getAuthors().stream()
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Libro no encontrado con ID: " + id));
+
+        existingBook.setIsbn(updatedFields.getIsbn());
+        existingBook.setTitle(updatedFields.getTitle());
+        existingBook.setDefaultChapters(updatedFields.getDefaultChapters());
+        existingBook.setDefaultPages(updatedFields.getDefaultPages());
+        existingBook.setOrigin(updatedFields.getOrigin());
+        existingBook.setCoverType(updatedFields.getCoverType());
+        existingBook.setCoverValue(updatedFields.getCoverValue());
+
+        if (updatedFields.getFormat() != null && updatedFields.getFormat().getId() != null) {
+            var format = formatRepository.findById(updatedFields.getFormat().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Formato no encontrado"));
+            existingBook.setFormat(format);
+        }
+
+        if (updatedFields.getAuthors() != null) {
+            var authors = updatedFields.getAuthors().stream()
                     .map(a -> authorRepository.findById(a.getId())
                             .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado con ID: " + a.getId())))
                     .collect(Collectors.toSet());
-            book.setAuthors(authors);
+            existingBook.setAuthors(authors);
         }
 
-        if (book.getGenres() != null && !book.getGenres().isEmpty()) {
-            var genres = book.getGenres().stream()
+        if (updatedFields.getGenres() != null) {
+            var genres = updatedFields.getGenres().stream()
                     .map(g -> genderRepository.findById(g.getId())
                             .orElseThrow(() -> new ResourceNotFoundException("Género no encontrado con ID: " + g.getId())))
                     .collect(Collectors.toSet());
-            book.setGenres(genres);
+            existingBook.setGenres(genres);
         }
 
-        if (book.getIsbn() != null && !book.getIsbn().isBlank()) {
-            return bookRepository.findByIsbn(book.getIsbn())
-                    .orElseGet(() -> bookRepository.save(book));
-        }
-
-        return bookRepository.save(book);
+        return bookRepository.save(existingBook);
     }
 }

@@ -25,7 +25,8 @@ public class GetRecommendationUseCase {
         var pref = prefRepo.findByUserId(userId).orElseThrow();
 
         List<Book> recomendaciones = bookRepo.findAll().stream()
-                .filter(book -> (book.getGenres().stream().anyMatch(g -> pref.getGenres().contains(g))))
+                .filter(book -> (pref.getFormats().contains(book.getFormat())) ||
+                        (book.getGenres().stream().anyMatch(g -> pref.getGenres().contains(g))))
                 .limit(2)
                 .collect(Collectors.toList());
 

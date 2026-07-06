@@ -18,6 +18,7 @@ public class DeleteLibraryUseCase {
 
     @Transactional
     public void execute(UUID userId, UUID libraryId) {
+        // Validación de seguridad: Solo el dueño puede borrar su registro
         UserLibrary entity = repository.findById(libraryId)
                 .filter(lib -> lib.getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la entrada en la librería o no tienes permiso."));
