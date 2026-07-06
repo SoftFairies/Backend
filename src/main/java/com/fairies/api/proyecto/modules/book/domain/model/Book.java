@@ -1,7 +1,6 @@
 package com.fairies.api.proyecto.modules.book.domain.model;
 
 import com.fairies.api.proyecto.modules.author.domain.model.Author;
-import com.fairies.api.proyecto.modules.format.domain.model.Format;
 import com.fairies.api.proyecto.modules.gender.domain.model.Gender;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,27 +31,14 @@ public class Book {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "format_id", nullable = false)
-    private Format format;
-
     @Column(length = 50, unique = true)
     private String isbn;
 
     @Column(nullable = false)
     private String title;
 
-    private Integer defaultChapters;
-    private Integer defaultPages;
-
-    @Column(nullable = false)
-    private String origin;
-
-    @Column(nullable = false)
-    private String coverType;
-
-    @Column(nullable = false)
-    private String coverValue;
+    @Column
+    private String cover;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

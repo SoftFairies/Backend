@@ -3,25 +3,19 @@ package com.fairies.api.proyecto.modules.book.application;
 import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class GetByIdBookUseCase {
 
-    private final BookRepository repository;
+    private final BookRepository bookRepository;
 
-    public GetByIdBookUseCase(BookRepository repository) {
-        this.repository = repository;
-    }
-
-    @Transactional(readOnly = true)
     public Book execute(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("El ID no puede ser nulo.");
-        }
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Libro con ID " + id + " no encontrado"));
     }
 }
