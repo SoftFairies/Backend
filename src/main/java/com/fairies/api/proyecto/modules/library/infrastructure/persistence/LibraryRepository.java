@@ -24,4 +24,10 @@ public interface LibraryRepository extends JpaRepository<UserLibrary, UUID> {
     boolean existsByBookIdAndFormatId(UUID bookId, UUID formatId);
 
     long countByUserId(UUID userId);
+
+    @Query("SELECT ul.readingStatus.id, COUNT(ul) FROM UserLibrary ul WHERE ul.user.id = :userId GROUP BY ul.readingStatus.id")
+    List<Object[]> countBooksByStatus(@Param("userId") UUID userId);
+
+    @Query("SELECT ul FROM UserLibrary ul WHERE ul.user.id = :userId AND ul.finishedAt IS NOT NULL AND YEAR(ul.finishedAt) = :year")
+    List<UserLibrary> findCompletedBooksByYear(@Param("userId") UUID userId, @Param("year") int year);
 }
