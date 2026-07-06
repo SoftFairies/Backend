@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper(config = GlobalMapperConfig.class)
 public interface LetterMapper {
 
-    @Mapping(source = "recommendationContent.bookId", target = "bookId")
+    @Mapping(source = "recommendationContent.book.title", target = "bookName")
     @Mapping(source = "recommendationContent.content", target = "content")
     LetterResponse toResponse(Letter letter);
 
