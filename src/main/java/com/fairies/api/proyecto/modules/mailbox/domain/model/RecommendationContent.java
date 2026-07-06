@@ -1,6 +1,7 @@
 // feat(mailbox): create recommendation content entity to avoid database text saturation
 package com.fairies.api.proyecto.modules.mailbox.domain.model;
 
+import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
@@ -18,8 +19,9 @@ public class RecommendationContent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private UUID bookId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
     @Column(nullable = false)
     private UUID senderId;
