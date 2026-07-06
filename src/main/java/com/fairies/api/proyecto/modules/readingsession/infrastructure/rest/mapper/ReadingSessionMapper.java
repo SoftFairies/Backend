@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReadingSessionMapper {
 
@@ -15,4 +17,10 @@ public interface ReadingSessionMapper {
     ReadingSession toDomain(ReadingSessionRequest request);
 
     ReadingSessionResponse toResponse(ReadingSession domain);
+
+    @org.mapstruct.Named("stringToUuid")
+    default UUID stringToUuid(String id) {
+        if (id == null || id.isBlank()) return null;
+        return UUID.fromString(id);
+    }
 }

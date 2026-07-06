@@ -4,6 +4,8 @@ import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.UUID;
+
 import lombok.*;
 
 @Entity
@@ -15,8 +17,9 @@ import lombok.*;
 @Builder
 public class ReadingSession {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid-v7")
+    @org.hibernate.annotations.UuidGenerator(style = org.hibernate.annotations.UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
