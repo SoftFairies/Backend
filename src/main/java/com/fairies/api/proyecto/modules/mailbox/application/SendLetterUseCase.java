@@ -25,14 +25,12 @@ public class SendLetterUseCase {
     @Transactional
     public void execute(UUID senderId, UUID bookId, String contentText) {
         Book book = bookRepository.getById(bookId);
-        contentRepository.findByBookIdAndSenderIdAndContent(bookId, senderId, contentText)
-                .orElseGet(() -> contentRepository.save(
-                        RecommendationContent.builder()
-                                .book(book)
-                                .senderId(senderId)
-                                .content(contentText)
-                                .build()
-                ));
+        contentRepository.save(RecommendationContent.builder()
+                .book(book)
+                .senderId(senderId)
+                .content(contentText)
+                .build());
+        contentRepository.flush();
 
         if (senderId != null) {
             awardBadgeUseCase.execute(senderId, 3L);

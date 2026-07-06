@@ -8,8 +8,7 @@ import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
 
@@ -20,21 +19,23 @@ public class AwardBadgeUseCase {
     private final UserBadgeRepository userBadgeRepository;
     private final UserRepository userRepository;
     private final BadgeRepository badgeRepository;
+    private final TransactionTemplate transactionTemplate;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute(UUID userId, Long badgeId) {
-        if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-            Badge badge = badgeRepository.findById(badgeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
+        transactionTemplate.executeWithoutResult(status -> {
+            if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                Badge badge = badgeRepository.findById(badgeId)
+                        .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
 
-            UserBadge userBadge = UserBadge.builder()
-                    .user(user)
-                    .badge(badge)
-                    .build();
+                UserBadge userBadge = UserBadge.builder()
+                        .user(user)
+                        .badge(badge)
+                        .build();
 
-            userBadgeRepository.saveAndFlush(userBadge);
-        }
+                userBadgeRepository.save(userBadge);
+            }
+        });
     }
 }

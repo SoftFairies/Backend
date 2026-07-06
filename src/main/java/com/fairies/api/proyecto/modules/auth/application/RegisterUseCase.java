@@ -8,6 +8,7 @@ import com.fairies.api.proyecto.modules.user.infrastructure.persistence.RoleRepo
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class RegisterUseCase {
     private final PasswordHasher passwordHasher;
     private final AwardBadgeUseCase awardBadgeUseCase;
 
+    @Transactional
     public User execute(User newUser) {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new IllegalArgumentException("El correo electrónico ya está en uso.");
@@ -30,6 +32,7 @@ public class RegisterUseCase {
         newUser.setRole(role);
 
         User savedUser = userRepository.save(newUser);
+        userRepository.flush();
 
         awardBadgeUseCase.execute(savedUser.getId(), 8L);
 
