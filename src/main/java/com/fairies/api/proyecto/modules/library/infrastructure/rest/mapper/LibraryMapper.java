@@ -6,8 +6,10 @@ import com.fairies.api.proyecto.modules.library.domain.model.LibraryNote;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.LibraryEntryResponse;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.LibraryNoteResponse;
+import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.UpdateLibraryEntryRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = GlobalMapperConfig.class, uses = {BookMapper.class})
 public interface LibraryMapper {
@@ -19,4 +21,11 @@ public interface LibraryMapper {
 
     @Mapping(source = "userLibrary.book.title", target = "bookTitle")
     LibraryNoteResponse toNoteResponse(LibraryNote note);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "book", ignore = true)
+    @Mapping(target = "readingStatus", ignore = true)
+    @Mapping(target = "format", ignore = true)
+    void updateFromRequest(UpdateLibraryEntryRequest request, @MappingTarget UserLibrary target);
 }
