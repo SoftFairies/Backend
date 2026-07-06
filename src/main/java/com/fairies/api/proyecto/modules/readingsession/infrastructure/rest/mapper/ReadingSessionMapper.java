@@ -9,7 +9,9 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReadingSessionMapper {
+
     @Mapping(target = "book.id", source = "libroId")
+    @Mapping(target = "user.id", source = "usuarioId")
     ReadingSession toDomain(ReadingSessionRequest request);
 
     ReadingSessionResponse toResponse(ReadingSession domain);
