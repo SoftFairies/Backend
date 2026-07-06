@@ -5,6 +5,7 @@ import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
 import com.fairies.api.proyecto.modules.book.infrastructure.rest.mapper.BookMapper;
 import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
+import com.fairies.api.proyecto.modules.gamification.application.AwardBadgeUseCase;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryRepository;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.AddLibraryEntryRequest;
@@ -26,6 +27,8 @@ public class AddLibraryUseCase {
     private final FormatRepository formatRepository;
     private final BookMapper bookMapper;
 
+    private final AwardBadgeUseCase awardBadgeUseCase;
+
     public UserLibrary execute(User user, AddLibraryEntryRequest request) {
         Book book = (request.bookId() != null)
                 ? bookRepository.findById(request.bookId()).orElseThrow()
@@ -40,6 +43,11 @@ public class AddLibraryUseCase {
                 .currentPage(request.currentPage() != null ? request.currentPage() : 0)
                 .isFavorite(request.isFavorite())
                 .build();
+
+        long bookCount = libraryRepository.countByUserId(user.getId());
+        if (bookCount == 3) {
+            awardBadgeUseCase.execute(user.getId(), 4L);
+        }
 
         return libraryRepository.save(entry);
     }

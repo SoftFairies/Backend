@@ -8,6 +8,7 @@ import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class AwardBadgeUseCase {
     private final UserRepository userRepository;
     private final BadgeRepository badgeRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute(UUID userId, Long badgeId) {
         if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
             User user = userRepository.findById(userId)
@@ -33,7 +34,7 @@ public class AwardBadgeUseCase {
                     .badge(badge)
                     .build();
 
-            userBadgeRepository.save(userBadge);
+            userBadgeRepository.saveAndFlush(userBadge);
         }
     }
 }
