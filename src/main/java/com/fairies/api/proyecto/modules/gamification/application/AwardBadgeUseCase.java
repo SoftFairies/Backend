@@ -7,12 +7,14 @@ import com.fairies.api.proyecto.modules.gamification.infrastructure.persistence.
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwardBadgeUseCase {
@@ -29,12 +31,11 @@ public class AwardBadgeUseCase {
             Badge badge = badgeRepository.findById(badgeId)
                     .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
 
-            UserBadge userBadge = UserBadge.builder()
+            userBadgeRepository.save(UserBadge.builder()
                     .user(user)
                     .badge(badge)
-                    .build();
-
-            userBadgeRepository.saveAndFlush(userBadge);
+                    .build());
+            log.info("Insignia {} guardada para usuario {}", badgeId, userId);
         }
     }
 }

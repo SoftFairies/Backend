@@ -18,7 +18,7 @@ public class DateProvider {
 
             // 2 minutos = 2 * 60 * 1000 = 120,000 milisegundos
             // Dividimos el tiempo transcurrido entre 120,000 para saber cuántos "días virtuales" sumar
-            long simulatedDaysPassed = elapsedMillis / 6_000;
+            long simulatedDaysPassed = elapsedMillis / 120_000;
 
             return LocalDate.now().plusDays(simulatedDaysPassed);
         }

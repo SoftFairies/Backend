@@ -26,7 +26,6 @@ public class AddLibraryUseCase {
     private final ReadingStatusRepository readingStatusRepository;
     private final FormatRepository formatRepository;
     private final BookMapper bookMapper;
-
     private final AwardBadgeUseCase awardBadgeUseCase;
 
     public UserLibrary execute(User user, AddLibraryEntryRequest request) {
@@ -34,7 +33,7 @@ public class AddLibraryUseCase {
                 ? bookRepository.findById(request.bookId()).orElseThrow()
                 : addBookUseCase.execute(bookMapper.toDomain(request.newBook()));
 
-        UserLibrary entry = UserLibrary.builder()
+        UserLibrary entry = libraryRepository.save(UserLibrary.builder()
                 .user(user)
                 .book(book)
                 .readingStatus(readingStatusRepository.findById(request.readingStatusId()).orElseThrow())
@@ -42,13 +41,15 @@ public class AddLibraryUseCase {
                 .currentChapter(request.currentChapter() != null ? request.currentChapter() : 0)
                 .currentPage(request.currentPage() != null ? request.currentPage() : 0)
                 .isFavorite(request.isFavorite())
-                .build();
+                .build());
+
+        libraryRepository.flush();
 
         long bookCount = libraryRepository.countByUserId(user.getId());
         if (bookCount == 3) {
             awardBadgeUseCase.execute(user.getId(), 4L);
         }
 
-        return libraryRepository.save(entry);
+        return entry;
     }
 }
