@@ -6,16 +6,17 @@ import com.fairies.api.proyecto.modules.readingsession.infrastructure.rest.dto.R
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-
 import java.util.UUID;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReadingSessionMapper {
 
     @Mapping(target = "book.id", source = "libroId")
-    @Mapping(target = "user.id", source = "usuarioId")
+    @Mapping(target = "user.id", source = "usuarioId", qualifiedByName = "stringToUuid")
     ReadingSession toDomain(ReadingSessionRequest request);
 
+    @Mapping(target = "libroId", source = "book.id")
+    @Mapping(target = "usuarioId", source = "user.id")
     ReadingSessionResponse toResponse(ReadingSession domain);
 
     @org.mapstruct.Named("stringToUuid")
