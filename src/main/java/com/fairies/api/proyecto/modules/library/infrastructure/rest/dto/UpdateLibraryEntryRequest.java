@@ -5,7 +5,7 @@ public record UpdateLibraryEntryRequest(
         String title,
         Long readingStatusId,
         Long formatId,
-        Integer currentChapter,
-        Integer currentPage,
+        Integer totalChapter,
+        Integer totalPage,
         Boolean isFavorite
 ) {}

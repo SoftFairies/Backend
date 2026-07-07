@@ -1,12 +1,12 @@
 package com.fairies.api.proyecto.modules.readingsession.domain.model;
 
-import com.fairies.api.proyecto.modules.book.domain.model.Book;
-import com.fairies.api.proyecto.modules.user.domain.model.User;
+import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.LocalDate;
 import java.util.UUID;
-
-import lombok.*;
 
 @Entity
 @Table(name = "reading_sessions")
@@ -16,22 +16,32 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReadingSession {
+
     @Id
     @GeneratedValue(generator = "uuid-v7")
-    @org.hibernate.annotations.UuidGenerator(style = org.hibernate.annotations.UuidGenerator.Style.VERSION_7)
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_library_id", nullable = false)
+    private UserLibrary userLibrary;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
+    @Column(nullable = false)
+    private LocalDate date;
 
-    private LocalDate fecha;
+    @Column(name = "seconds_read", nullable = false)
+    private Integer secondsRead;
 
-    @Column(name = "minutos_leidos")
-    private Integer segundosLeidos;
-    private Integer paginasAvanzadas;
+    @Column(name = "pages_read", nullable = false)
+    private Integer pagesRead;
+
+    @Column(name = "chapters_read", nullable = false)
+    private Integer chaptersRead;
+
+    @Column(name = "is_flagged", nullable = false)
+    @Builder.Default
+    private boolean isFlagged = false;
+
+    @Column(name = "flag_reason")
+    private String flagReason;
 }

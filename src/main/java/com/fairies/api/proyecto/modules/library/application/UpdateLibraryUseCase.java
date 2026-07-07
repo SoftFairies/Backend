@@ -23,7 +23,6 @@ public class UpdateLibraryUseCase {
 
     @Transactional
     public UserLibrary execute(UUID userId, UUID id, UpdateLibraryEntryRequest request) {
-        // 1. Validamos existencia y propiedad
         UserLibrary entry = libraryRepository.findById(id)
                 .filter(lib -> lib.getUser().getId().equals(userId))
                 .orElseThrow(() -> new IllegalArgumentException("Registro de biblioteca no encontrado o no autorizado"));
@@ -33,10 +32,8 @@ public class UpdateLibraryUseCase {
                     .orElseThrow(() -> new IllegalArgumentException("Formato no encontrado")));
         }
 
-        // 2. MapStruct hace la magia con los campos simples (capítulo, página, favorito)
         libraryMapper.updateFromRequest(request, entry);
 
-        // 3. Manejamos las relaciones de DB manualmente
         if (request.readingStatusId() != null) {
             entry.setReadingStatus(statusRepository.findById(request.readingStatusId())
                     .orElseThrow(() -> new IllegalArgumentException("Estado de lectura no encontrado")));

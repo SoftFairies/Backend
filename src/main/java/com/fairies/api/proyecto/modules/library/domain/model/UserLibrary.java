@@ -51,6 +51,14 @@ public class UserLibrary {
     @Builder.Default
     private Integer currentPage = 0;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer totalChapter = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer totalPage = 0;
+
     @Column(name = "finished_at")
     private LocalDate finishedAt;
 
