@@ -5,10 +5,9 @@ import java.util.UUID;
 
 public record LetterResponse(
          Long id,
+         String bookName,
          UUID bookId,
-         UUID senderId,
          String content,
-         LocalDateTime sentAt,
          LocalDateTime unlockAt
 ) { }
 

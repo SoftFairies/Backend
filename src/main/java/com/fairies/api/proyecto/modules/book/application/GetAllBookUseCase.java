@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class GetAllBookUseCase {
-
     private final BookRepository repository;
 
     public GetAllBookUseCase(BookRepository repository) {
@@ -17,7 +16,10 @@ public class GetAllBookUseCase {
     }
 
     @Transactional(readOnly = true)
-    public Page<Book> execute(Pageable pageable) {
+    public Page<Book> execute(String query, Pageable pageable) {
+        if (query != null && !query.isBlank()) {
+            return repository.searchBooks(query, pageable);
+        }
         return repository.findAll(pageable);
     }
 }

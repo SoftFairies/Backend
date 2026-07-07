@@ -9,29 +9,20 @@ import com.fairies.api.proyecto.modules.auth.infrastructure.rest.dto.RegisterReq
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.rest.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class AuthRouting {
 
     private final RegisterUseCase registerUseCase;
     private final LoginUseCase loginUseCase;
     private final JwtService jwtService;
     private final UserMapper userMapper;
-
-    public AuthRouting(
-            RegisterUseCase registerUseCase,
-            LoginUseCase loginUseCase,
-            JwtService jwtService,
-            UserMapper userMapper) {
-        this.registerUseCase = registerUseCase;
-        this.loginUseCase = loginUseCase;
-        this.jwtService = jwtService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/register")
     @Transactional

@@ -4,13 +4,16 @@ import com.fairies.api.proyecto.common.application.security.JwtService;
 import com.fairies.api.proyecto.modules.book.application.AddBookUseCase;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.library.application.*;
-import com.fairies.api.proyecto.modules.library.domain.model.UserBookCustomization;
+import com.fairies.api.proyecto.modules.library.domain.model.LibraryNote;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
-import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.BookCustomizationRequest;
-import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.LibraryEnrollmentRequest;
-import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.LibraryProgressRequest;
+import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.*;
 import com.fairies.api.proyecto.modules.library.infrastructure.rest.mapper.LibraryMapper;
+import com.fairies.api.proyecto.modules.user.application.GetByIdUserUseCase;
+import com.fairies.api.proyecto.modules.user.domain.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,61 +28,60 @@ import java.util.UUID;
 public class LibraryRouting {
 
     private final AddLibraryUseCase addUseCase;
-    private final AddBookUseCase addBookUseCase;
     private final GetAllLibraryUseCase getAllUseCase;
+    private final GetByIdLibraryUseCase getByIdLibraryUseCase;
     private final UpdateLibraryUseCase updateUseCase;
     private final DeleteLibraryUseCase deleteUseCase;
-    private final SaveCustomizationUseCase saveCustomizationUseCase;
+
+    private final GetByIdUserUseCase getByIdUserUseCase;
+
+    private final AddNoteUseCase addNoteUseCase;
+    private final GetNotesByLibraryUseCase getNotesUseCase;
 
     private final JwtService jwtService;
     private final LibraryMapper mapper;
 
     @PostMapping
     public ResponseEntity<Void> add(
-            @RequestBody LibraryEnrollmentRequest request,
+            @Valid @RequestBody AddLibraryEntryRequest request,
             @RequestHeader("Authorization") String authHeader
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        UUID bookId;
+        User user = getByIdUserUseCase.execute(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-        // 1. Obtener o crear el libro
-        if (request.bookId() != null) {
-            bookId = request.bookId();
-        } else {
-            Book newBook = addBookUseCase.execute(mapper.toBook(request.bookData()));
-            bookId = newBook.getId();
-        }
-
-        CreateLibraryEntryCommand command = new CreateLibraryEntryCommand(
-                userId,
-                bookId,
-                request.readingStatusId(),
-                request.currentPage()
-        );
-
-        addUseCase.execute(command);
-
+        addUseCase.execute(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<UserLibrary>> getAll(
+    public ResponseEntity<Page<LibraryEntryResponse>> getAll(
             @RequestHeader("Authorization") String authHeader,
             Pageable pageable
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        return ResponseEntity.ok(getAllUseCase.execute(userId, pageable));
+        return ResponseEntity.ok(getAllUseCase.execute(userId, pageable).map(mapper::toResponse));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(
+    @GetMapping("/{id}")
+    public ResponseEntity<LibraryEntryResponse> getById(
             @PathVariable UUID id,
-            @RequestBody LibraryProgressRequest request,
             @RequestHeader("Authorization") String authHeader
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        updateUseCase.execute(userId, id, request);
-        return ResponseEntity.noContent().build();
+        UserLibrary library = getByIdLibraryUseCase.execute(id, userId);
+        return ResponseEntity.ok(mapper.toResponse(library));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<LibraryEntryResponse> update(
+            @PathVariable UUID id,
+            @RequestBody UpdateLibraryEntryRequest request,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        UUID userId = jwtService.getUserIdFromToken(authHeader);
+        UserLibrary updatedLibrary = updateUseCase.execute(userId, id, request);
+        return ResponseEntity.ok(mapper.toResponse(updatedLibrary));
     }
 
     @DeleteMapping("/{id}")
@@ -92,14 +94,31 @@ public class LibraryRouting {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/customization")
-    public ResponseEntity<UserBookCustomization> customize(
-            @PathVariable UUID id,
-            @RequestBody BookCustomizationRequest request,
+    @PostMapping("/{libraryId}/notes")
+    public ResponseEntity<LibraryNoteResponse> addNote(
+            @PathVariable UUID libraryId,
+            @Valid @RequestBody LibraryNoteRequest request
+    ) {
+        LibraryNote savedNote = addNoteUseCase.execute(libraryId, request);
+
+        LibraryNoteResponse responseDto = mapper.toNoteResponse(savedNote);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @GetMapping("/{libraryId}/notes")
+    public ResponseEntity<List<LibraryNoteResponse>> getNotes(
+            @PathVariable UUID libraryId,
             @RequestHeader("Authorization") String authHeader
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
-        UserBookCustomization result = saveCustomizationUseCase.execute(userId, id, request);
-        return ResponseEntity.ok(result);
+
+        var notes = getNotesUseCase.execute(libraryId);
+
+        var response = notes.stream()
+                .map(mapper::toNoteResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }

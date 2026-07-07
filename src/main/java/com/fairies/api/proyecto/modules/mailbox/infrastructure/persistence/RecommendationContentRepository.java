@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface RecommendationContentRepository extends JpaRepository<RecommendationContent, Long> {
     Optional<RecommendationContent> findByBookIdAndSenderIdAndContent(UUID bookId, UUID senderId, String content);
 
-    @Query("SELECT rc FROM RecommendationContent rc WHERE rc.senderId = :senderId ORDER BY rc.id DESC")
+    //@Query("SELECT rc FROM RecommendationContent rc WHERE rc.senderId = :senderId ORDER BY rc.id DESC")
     Optional<RecommendationContent> findFirstBySenderIdOrderByIdDesc(UUID senderId);
+    long countBySenderId(UUID senderId);
 }

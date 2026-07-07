@@ -1,30 +1,47 @@
 package com.fairies.api.proyecto.modules.library.application;
 
+import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryRepository;
-import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.LibraryProgressRequest;
+import com.fairies.api.proyecto.modules.library.infrastructure.rest.dto.UpdateLibraryEntryRequest;
+import com.fairies.api.proyecto.modules.library.infrastructure.rest.mapper.LibraryMapper;
+import com.fairies.api.proyecto.modules.readingStatus.infrastructure.persistence.ReadingStatusRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class UpdateLibraryUseCase {
 
-    private final LibraryRepository repository;
+    private final LibraryRepository libraryRepository;
+    private final ReadingStatusRepository statusRepository;
+    private final FormatRepository formatRepository;
+    private final LibraryMapper libraryMapper;
 
     @Transactional
-    public void execute(UUID userId, UUID libraryId, LibraryProgressRequest request) {
-        UserLibrary entity = repository.findById(libraryId)
+    public UserLibrary execute(UUID userId, UUID id, UpdateLibraryEntryRequest request) {
+        // 1. Validamos existencia y propiedad
+        UserLibrary entry = libraryRepository.findById(id)
                 .filter(lib -> lib.getUser().getId().equals(userId))
-                .orElseThrow(() -> new RuntimeException("Registro no encontrado o no autorizado"));
+                .orElseThrow(() -> new IllegalArgumentException("Registro de biblioteca no encontrado o no autorizado"));
 
-        // Actualizamos los campos necesarios
-        entity.setCurrentPage(request.currentPage());
-        entity.setCurrentChapter(request.currentChapter());
-        // Agrega aquí otros campos que desees permitir actualizar
+        if (request.formatId() != null) {
+            entry.setFormat(formatRepository.findById(request.formatId())
+                    .orElseThrow(() -> new IllegalArgumentException("Formato no encontrado")));
+        }
 
-        repository.save(entity);
+        // 2. MapStruct hace la magia con los campos simples (capítulo, página, favorito)
+        libraryMapper.updateFromRequest(request, entry);
+
+        // 3. Manejamos las relaciones de DB manualmente
+        if (request.readingStatusId() != null) {
+            entry.setReadingStatus(statusRepository.findById(request.readingStatusId())
+                    .orElseThrow(() -> new IllegalArgumentException("Estado de lectura no encontrado")));
+        }
+
+        return libraryRepository.save(entry);
     }
 }
