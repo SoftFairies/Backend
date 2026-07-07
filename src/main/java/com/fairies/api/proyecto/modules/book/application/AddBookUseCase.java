@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
 @Component
-@Transactional
 @RequiredArgsConstructor
 public class AddBookUseCase {
 
@@ -21,6 +20,7 @@ public class AddBookUseCase {
     private final FindOrCreateAuthorUseCase findOrCreateAuthorUseCase;
     private final FindOrCreateGenderUseCase findOrCreateGenderUseCase;
 
+    @Transactional
     public Book execute(Book book) {
         if (book.getAuthors() != null) {
             book.setAuthors(book.getAuthors().stream()

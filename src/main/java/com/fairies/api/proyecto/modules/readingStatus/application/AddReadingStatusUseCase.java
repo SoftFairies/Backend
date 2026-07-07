@@ -2,16 +2,16 @@ package com.fairies.api.proyecto.modules.readingStatus.application;
 
 import com.fairies.api.proyecto.modules.readingStatus.domain.model.ReadingStatus;
 import com.fairies.api.proyecto.modules.readingStatus.infrastructure.persistence.ReadingStatusRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@RequiredArgsConstructor
 public class AddReadingStatusUseCase {
     private final ReadingStatusRepository repository;
 
-    public AddReadingStatusUseCase(ReadingStatusRepository repository) {
-        this.repository = repository;
-    }
-
+    @Transactional
     public ReadingStatus execute(ReadingStatus entity) {
         if (entity == null) {
             throw new IllegalArgumentException("La entidad no puede ser nula.");

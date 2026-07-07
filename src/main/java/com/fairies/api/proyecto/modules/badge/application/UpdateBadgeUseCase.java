@@ -5,20 +5,19 @@ import com.fairies.api.proyecto.common.domain.service.StorageService;
 import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.badge.domain.model.Badge;
 import com.fairies.api.proyecto.modules.badge.infrastructure.persistence.BadgeRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class UpdateBadgeUseCase {
     private final BadgeRepository repository;
     private final StorageService storageService;
 
-    public UpdateBadgeUseCase(BadgeRepository repository, StorageService storageService) {
-        this.repository = repository;
-        this.storageService = storageService;
-    }
-
+    @Transactional
     public Badge execute(Long id, MultipartFile file, Badge updatedFields) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo.");

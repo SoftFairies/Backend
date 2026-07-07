@@ -9,7 +9,7 @@ public record AddLibraryEntryRequest(
         CreateBookRequest newBook,
         @NotNull Long readingStatusId,
         @NotNull Long formatId,
-        Integer currentChapter,
-        Integer currentPage,
+        Integer totalChapter,
+        Integer totalPage,
         boolean isFavorite
 ) {}

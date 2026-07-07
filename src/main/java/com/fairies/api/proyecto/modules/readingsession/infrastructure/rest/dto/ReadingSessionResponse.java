@@ -1,15 +1,15 @@
 package com.fairies.api.proyecto.modules.readingsession.infrastructure.rest.dto;
 
-import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import java.time.LocalDate;
-import lombok.Data;
+import java.util.UUID;
 
-@Data
-public class ReadingSessionResponse {
-    private Long id;
-    private String usuarioId;
-    private Book book;
-    private LocalDate fecha;
-    private Integer segundosLeidos;
-    private Integer paginasAvanzadas;
-}
+public record ReadingSessionResponse(
+        UUID id,
+        UUID libraryId,
+        String bookTitle,
+        String bookCover,
+        LocalDate date,
+        Integer secondsRead,
+        Integer pagesRead,
+        Integer chaptersRead
+) {}

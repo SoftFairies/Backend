@@ -8,6 +8,7 @@ import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class UpdateUserUseCase {
     private final PictureRepository pictureRepository;
     private final PasswordHasher passwordHasher;
 
+    @Transactional
     public User execute(User user, Long pictureId, String rawPassword) {
 
         if (pictureId != null) {

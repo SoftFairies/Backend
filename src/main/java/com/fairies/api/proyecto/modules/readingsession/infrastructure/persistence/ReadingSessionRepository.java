@@ -1,6 +1,5 @@
 package com.fairies.api.proyecto.modules.readingsession.infrastructure.persistence;
 
-
 import com.fairies.api.proyecto.modules.readingsession.domain.model.ReadingSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ReadingSessionRepository extends JpaRepository<ReadingSession, Long> {
-    List<ReadingSession> findByUserIdAndFechaBetween(UUID userId, LocalDate startDate, LocalDate endDate);
+public interface ReadingSessionRepository extends JpaRepository<ReadingSession, UUID> {
 
-    // Sumar minutos totales históricos
-    @Query("SELECT SUM(rs.segundosLeidos) FROM ReadingSession rs WHERE rs.userId = :userId")
+    List<ReadingSession> findByUserLibrary_User_IdAndDateBetween(UUID userId, LocalDate startDate, LocalDate endDate);
+
+    long countByUserLibrary_User_Id(UUID userId);
+
+    @Query("SELECT SUM(rs.secondsRead) FROM ReadingSession rs WHERE rs.userLibrary.user.id = :userId")
     Integer sumTotalSecondsByUserId(@Param("userId") UUID userId);
 }

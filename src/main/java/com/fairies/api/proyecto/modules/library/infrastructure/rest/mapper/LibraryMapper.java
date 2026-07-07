@@ -16,7 +16,7 @@ public interface LibraryMapper {
 
     @Mapping(source = "readingStatus.name", target = "readingStatusName")
     @Mapping(source = "format.name", target = "formatName")
-        // @Mapping(source = "customTitle", target = "book.title", conditionExpression = "java(userLibrary.getCustomTitle() != null)")
+    //@Mapping(source = "customTitle", target = "book.title", conditionExpression = "java(userLibrary.getCustomTitle() != null)")
     LibraryEntryResponse toResponse(UserLibrary userLibrary);
 
     @Mapping(source = "userLibrary.book.title", target = "bookTitle")

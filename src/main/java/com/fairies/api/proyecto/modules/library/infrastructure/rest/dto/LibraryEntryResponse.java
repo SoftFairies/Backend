@@ -10,5 +10,7 @@ public record LibraryEntryResponse(
         String formatName,
         Integer currentChapter,
         Integer currentPage,
+        Integer totalPage,
+        Integer totalChapter,
         boolean isFavorite
 ) {}

@@ -5,20 +5,19 @@ import com.fairies.api.proyecto.common.domain.service.StorageService;
 import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.picture.domain.model.Picture;
 import com.fairies.api.proyecto.modules.picture.infrastructure.persistence.PictureRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class UpdatePictureUseCase {
     private final PictureRepository repository;
     private final StorageService storageService;
 
-    public UpdatePictureUseCase(PictureRepository repository, StorageService storageService) {
-        this.repository = repository;
-        this.storageService = storageService;
-    }
-
+    @Transactional(readOnly = true)
     public Picture execute(Long id, MultipartFile file, Picture updatedFields) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo.");

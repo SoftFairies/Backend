@@ -5,19 +5,18 @@ import com.fairies.api.proyecto.modules.format.domain.model.Format;
 import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.dto.FormatResponse;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.mapper.FormatMapper;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class GetByIdFormatUseCase {
     private final FormatRepository repository;
     private final FormatMapper mapper;
 
-    public GetByIdFormatUseCase(FormatRepository repository, FormatMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
+    @Transactional
     public FormatResponse execute(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo.");

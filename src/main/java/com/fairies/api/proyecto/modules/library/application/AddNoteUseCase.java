@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Component
-@Transactional
 @RequiredArgsConstructor
 public class AddNoteUseCase {
     private final LibraryNoteRepository noteRepository;
     private final LibraryRepository libraryRepository;
 
+    @Transactional
     public LibraryNote execute(UUID libraryId, LibraryNoteRequest request) {
         UserLibrary library = libraryRepository.findById(libraryId).orElseThrow();
 
