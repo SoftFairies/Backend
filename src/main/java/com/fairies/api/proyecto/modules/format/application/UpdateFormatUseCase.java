@@ -6,25 +6,21 @@ import com.fairies.api.proyecto.modules.format.domain.model.Format;
 import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.dto.FormatResponse;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.mapper.FormatMapper;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class UpdateFormatUseCase {
     private final FormatRepository repository;
     private final FormatMapper mapper;
 
-    public UpdateFormatUseCase(FormatRepository repository, FormatMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
+    @Transactional
     public FormatResponse execute(Long id, UpdateCatalogPlainRequest request) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo.");
-        }
-        if (request == null) {
-            throw new IllegalArgumentException("La petición de actualización no puede ser nula.");
         }
 
         Format existingEntity = repository.findById(id)

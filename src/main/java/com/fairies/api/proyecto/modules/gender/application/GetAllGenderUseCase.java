@@ -14,7 +14,10 @@ public class GetAllGenderUseCase {
         this.repository = repository;
     }
 
-    public Page<Gender> execute(Pageable pageable) {
+    public Page<Gender> execute(String query, Pageable pageable) {
+        if (query != null && !query.isBlank()) {
+            return repository.findByNameContainingIgnoreCase(query, pageable);
+        }
         return repository.findAll(pageable);
     }
 }

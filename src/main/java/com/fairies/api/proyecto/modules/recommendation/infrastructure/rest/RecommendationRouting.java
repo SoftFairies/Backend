@@ -42,7 +42,7 @@ public class RecommendationRouting {
     @GetMapping
     public ResponseEntity<RecommendationResponse> getMyPreferences(@RequestHeader("Authorization") String auth) {
         var userId = jwtService.getUserIdFromToken(auth);
-        var pref = getPrefUseCase.execute(userId); // Se usa el UseCase, no el repo
+        var pref = getPrefUseCase.execute(userId);
         return ResponseEntity.ok(recMapper.toResponse(pref));
     }
 

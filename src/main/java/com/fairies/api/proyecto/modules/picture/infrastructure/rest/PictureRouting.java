@@ -6,6 +6,7 @@ import com.fairies.api.proyecto.modules.picture.domain.model.Picture;
 import com.fairies.api.proyecto.modules.picture.infrastructure.rest.dto.PictureResponse;
 import com.fairies.api.proyecto.modules.picture.infrastructure.rest.mapper.PictureMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/pictures")
 public class PictureRouting {
 
@@ -25,22 +27,6 @@ public class PictureRouting {
     private final UpdatePictureUseCase updateUseCase;
     private final DeletePictureUseCase deleteUseCase;
     private final PictureMapper mapper;
-
-    public PictureRouting(
-            AddPictureUseCase addUseCase,
-            GetAllPicturesUseCase getAllUseCase,
-            GetPictureByIdUseCase getByIdUseCase,
-            UpdatePictureUseCase updateUseCase,
-            DeletePictureUseCase deleteUseCase,
-            PictureMapper mapper
-    ) {
-        this.addPictureUseCase = addUseCase;
-        this.getAllUseCase = getAllUseCase;
-        this.getByIdUseCase = getByIdUseCase;
-        this.updateUseCase = updateUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional

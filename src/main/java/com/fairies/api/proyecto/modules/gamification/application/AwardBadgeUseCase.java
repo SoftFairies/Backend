@@ -7,11 +7,14 @@ import com.fairies.api.proyecto.modules.gamification.infrastructure.persistence.
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwardBadgeUseCase {
@@ -20,7 +23,7 @@ public class AwardBadgeUseCase {
     private final UserRepository userRepository;
     private final BadgeRepository badgeRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute(UUID userId, Long badgeId) {
         if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
             User user = userRepository.findById(userId)
@@ -28,12 +31,11 @@ public class AwardBadgeUseCase {
             Badge badge = badgeRepository.findById(badgeId)
                     .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
 
-            UserBadge userBadge = UserBadge.builder()
+            userBadgeRepository.save(UserBadge.builder()
                     .user(user)
                     .badge(badge)
-                    .build();
-
-            userBadgeRepository.save(userBadge);
+                    .build());
+            log.info("Insignia {} guardada para usuario {}", badgeId, userId);
         }
     }
 }

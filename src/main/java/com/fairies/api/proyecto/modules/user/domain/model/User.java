@@ -2,6 +2,11 @@ package com.fairies.api.proyecto.modules.user.domain.model;
 
 import com.fairies.api.proyecto.modules.picture.domain.model.Picture;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,8 +34,10 @@ public class User {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String lastname;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -46,6 +53,9 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "picture_id", nullable = true)
     private Picture profilePicture;
+
+    @Column(name = "annual_goal", nullable = true)
+    private Integer annualGoal;
 
     @Column(nullable = false)
     private boolean deleted = false;
