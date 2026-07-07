@@ -3,16 +3,16 @@ package com.fairies.api.proyecto.modules.badge.application;
 import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.badge.domain.model.Badge;
 import com.fairies.api.proyecto.modules.badge.infrastructure.persistence.BadgeRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class DeleteBadgeUseCase {
     private final BadgeRepository repository;
 
-    public DeleteBadgeUseCase(BadgeRepository repository) {
-        this.repository = repository;
-    }
-
+    @Transactional
     public void execute(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo.");

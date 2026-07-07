@@ -7,6 +7,7 @@ import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepo
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class LoginUseCase {
     private final PasswordHasher passwordHasher;
     private final AwardBadgeUseCase awardBadgeUseCase;
 
+    @Transactional
     public User execute(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Credenciales incorrectas."));

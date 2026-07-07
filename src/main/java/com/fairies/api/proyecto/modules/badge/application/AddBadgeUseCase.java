@@ -4,20 +4,19 @@ import com.fairies.api.proyecto.common.domain.service.StorageResponse;
 import com.fairies.api.proyecto.common.domain.service.StorageService;
 import com.fairies.api.proyecto.modules.badge.domain.model.Badge;
 import com.fairies.api.proyecto.modules.badge.infrastructure.persistence.BadgeRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class AddBadgeUseCase {
     private final BadgeRepository repository;
     private final StorageService storageService;
 
-    public AddBadgeUseCase(BadgeRepository repository, StorageService storageService) {
-        this.repository = repository;
-        this.storageService = storageService;
-    }
-
+    @Transactional
     public Badge execute(MultipartFile file, Badge badge) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("El archivo de imagen es obligatorio para la creación de la insignia.");
