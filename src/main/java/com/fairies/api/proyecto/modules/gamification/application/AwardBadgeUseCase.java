@@ -7,11 +7,14 @@ import com.fairies.api.proyecto.modules.gamification.infrastructure.persistence.
 import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwardBadgeUseCase {
@@ -19,23 +22,20 @@ public class AwardBadgeUseCase {
     private final UserBadgeRepository userBadgeRepository;
     private final UserRepository userRepository;
     private final BadgeRepository badgeRepository;
-    private final TransactionTemplate transactionTemplate;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute(UUID userId, Long badgeId) {
-        transactionTemplate.executeWithoutResult(status -> {
-            if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-                Badge badge = badgeRepository.findById(badgeId)
-                        .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
+        if (!userBadgeRepository.existsByUser_IdAndBadge_Id(userId, badgeId)) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            Badge badge = badgeRepository.findById(badgeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Insignia no encontrada"));
 
-                UserBadge userBadge = UserBadge.builder()
-                        .user(user)
-                        .badge(badge)
-                        .build();
-
-                userBadgeRepository.save(userBadge);
-            }
-        });
+            userBadgeRepository.save(UserBadge.builder()
+                    .user(user)
+                    .badge(badge)
+                    .build());
+            log.info("Insignia {} guardada para usuario {}", badgeId, userId);
+        }
     }
 }

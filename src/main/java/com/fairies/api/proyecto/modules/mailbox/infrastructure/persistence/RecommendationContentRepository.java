@@ -15,4 +15,5 @@ public interface RecommendationContentRepository extends JpaRepository<Recommend
 
     //@Query("SELECT rc FROM RecommendationContent rc WHERE rc.senderId = :senderId ORDER BY rc.id DESC")
     Optional<RecommendationContent> findFirstBySenderIdOrderByIdDesc(UUID senderId);
+    long countBySenderId(UUID senderId);
 }
