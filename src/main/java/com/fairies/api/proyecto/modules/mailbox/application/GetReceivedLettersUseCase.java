@@ -1,4 +1,3 @@
-// feat(mailbox): enforce active contribution check based on last sent letter timestamps
 package com.fairies.api.proyecto.modules.mailbox.application;
 
 import com.fairies.api.proyecto.modules.mailbox.domain.model.Letter;
@@ -23,7 +22,7 @@ public class GetReceivedLettersUseCase {
     private final LetterRepository letterRepository;
     private final RecommendationContentRepository contentRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Letter> execute(UUID receiverId) {
         Optional<RecommendationContent> lastSentOpt = contentRepository.findFirstBySenderIdOrderByIdDesc(receiverId);
 

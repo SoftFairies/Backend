@@ -45,13 +45,13 @@ public class GetDashboardMetricsUseCase {
                 .orElse(0);
 
         List<Object[]> statusCounts = libraryRepository.countBooksByStatus(userId);
-        int toRead = 0, inProgress = 0, completed = 0;
+        int toRead = 0, inProgress = 0, completed = 0, other= 0;
         for (Object[] row : statusCounts) {
             Long statusId = (Long) row[0];
             Long count = (Long) row[1];
-            if (statusId == 1L) toRead = count.intValue();
+            if (statusId == 5L) toRead = count.intValue();
             else if (statusId == 2L) completed = count.intValue();
-            else inProgress += count.intValue();
+            else other += count.intValue();
         }
 
         List<UserLibrary> completedThisYear = libraryRepository.findCompletedBooksByYear(userId, today.getYear());

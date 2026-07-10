@@ -1,4 +1,3 @@
-// feat(mailbox): create recommendation content entity to avoid database text saturation
 package com.fairies.api.proyecto.modules.mailbox.domain.model;
 
 import com.fairies.api.proyecto.modules.book.domain.model.Book;

@@ -37,31 +37,24 @@ public class AddReadingSessionUseCase {
         userLibrary.setCurrentPage(userLibrary.getCurrentPage() + request.pagesRead());
         userLibrary.setCurrentChapter(userLibrary.getCurrentChapter() + request.chaptersRead());
 
-        // Asegúrate de que este ID (ej. 3L) sea el ID de tu estado "Completado" en la tabla reading_status
         if (userLibrary.getCurrentPage() >= userLibrary.getTotalPage() ||
                 userLibrary.getCurrentChapter() >= userLibrary.getTotalChapter()) {
 
-            // 1. Usamos el repositorio correcto (ReadingStatusRepository)
-            // 2. Buscamos por el ID adecuado (ej. 3L si es Long, o el UUID si es UUID)
             var completedStatus = readingStatusRepository.findById(3L)
                     .orElseThrow(() -> new ResourceNotFoundException("Status 'Completed' not found."));
 
-            // 3. Asignamos el objeto de tipo ReadingStatus (¡No la sesión!)
             userLibrary.setReadingStatus(completedStatus);
             userLibrary.setFinishedAt(LocalDate.now());
         }
 
 
-        // Lógica de Validación, para ver que el usuario no miente con su sesion
         boolean isFlagged = false;
         String flagReason = null;
 
-        // Calcular páginas por segundo (si el tiempo es muy bajo)
         if (request.secondsRead() > 0) {
             double pagesPerSecond = (double) request.pagesRead() / request.secondsRead();
 
-            // Si lee más de 5 páginas por segundo, es 100% trampa o error
-            if (pagesPerSecond > 5.0) {
+            if (pagesPerSecond > 5.0 ) {
                 isFlagged = true;
                 flagReason = "Velocidad inhumana: " + String.format("%.2f", pagesPerSecond) + " pág/seg";
             }
@@ -79,7 +72,10 @@ public class AddReadingSessionUseCase {
 
         ReadingSession savedSession = sessionRepository.save(session);
 
-        if (sessionRepository.countByUserLibrary_User_Id(userId) == 0) {
+        sessionRepository.flush();
+
+        if (sessionRepository.countByUserLibrary_User_Id(userId) == 1) {
+
             awardBadgeUseCase.execute(userId, 5L);
         }
 

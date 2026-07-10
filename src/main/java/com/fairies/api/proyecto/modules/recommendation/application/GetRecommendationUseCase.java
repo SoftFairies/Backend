@@ -21,19 +21,21 @@ public class GetRecommendationUseCase {
 
     @Transactional(readOnly = true)
     public List<Book> execute(UUID userId) {
-        var pref = prefRepo.findByUserId(userId).orElseThrow();
+        var pref = prefRepo.findByUserId(userId).orElse(null);
 
-        List<Book> candidates = bookRepo.findGenreMatches(
-                pref.getGenres(),
-                userId,
-                PageRequest.of(0, 20)
-        );
+        if (pref == null || pref.getGenres() == null || pref.getGenres().isEmpty()) {
+            return bookRepo.findAll(PageRequest.of(0, 5)).getContent();
+        }
+
+        List<Long> genreIds = pref.getGenres().stream().map(g -> g.getId()).toList();
+
+        List<Book> candidates = bookRepo.findGenreMatches(genreIds, userId, PageRequest.of(0, 20));
 
         if (candidates.isEmpty()) {
             return bookRepo.findAll(PageRequest.of(0, 5)).getContent();
         }
 
-        List<UUID> topFormatIds = libRepo.findMostUsedFormatIds(userId, PageRequest.of(0, 1));
+        List<Long> topFormatIds = libRepo.findMostUsedFormatIds(userId, PageRequest.of(0, 1));
 
         if (topFormatIds.isEmpty()) {
             return candidates.stream().limit(5).toList();

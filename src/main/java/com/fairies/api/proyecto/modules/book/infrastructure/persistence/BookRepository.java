@@ -24,7 +24,7 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
         ORDER BY CASE WHEN ul.id IS NOT NULL THEN 0 ELSE 1 END, b.id DESC
         """, nativeQuery = true)
     List<Book> findSortedByFormat(@Param("candidateIds") List<UUID> candidateIds,
-                                  @Param("formatId") UUID formatId);
+                                  @Param("formatId") Long formatId);
 
     @Query("SELECT DISTINCT b FROM Book b LEFT JOIN b.authors a WHERE " +
             "LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
@@ -36,9 +36,9 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
 
     @Query("SELECT DISTINCT b FROM Book b " +
             "JOIN b.genres g " +
-            "WHERE g IN :genres " +
+            "WHERE g.id IN :genreIds " + // Filtramos por el ID (Long)
             "AND b.id NOT IN (SELECT ul.book.id FROM UserLibrary ul WHERE ul.user.id = :userId)")
-    List<Book> findGenreMatches(@Param("genres") Set<Gender> genres,
+    List<Book> findGenreMatches(@Param("genreIds") List<Long> genreIds, // Cambiado a List<Long>
                                 @Param("userId") UUID userId,
                                 Pageable pageable);
 

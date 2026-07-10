@@ -20,7 +20,7 @@ public interface LibraryRepository extends JpaRepository<UserLibrary, UUID> {
     @Query("SELECT ul.format.id FROM UserLibrary ul " +
             "WHERE ul.user.id = :userId " +
             "GROUP BY ul.format.id ORDER BY count(ul) DESC")
-    List<UUID> findMostUsedFormatIds(@Param("userId") UUID userId, Pageable pageable);
+    List<Long> findMostUsedFormatIds(@Param("userId") UUID userId, Pageable pageable);
     boolean existsByBookIdAndFormatId(UUID bookId, UUID formatId);
 
     long countByUserId(UUID userId);
