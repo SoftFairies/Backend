@@ -1,4 +1,3 @@
-// feat(mailbox): simplify letter model to represent a basic user-claimed letter log
 package com.fairies.api.proyecto.modules.mailbox.domain.model;
 
 import jakarta.persistence.*;

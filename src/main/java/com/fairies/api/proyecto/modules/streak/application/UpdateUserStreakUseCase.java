@@ -36,7 +36,6 @@ public class UpdateUserStreakUseCase {
                             .build();
                 });
 
-        // 2. Lógica matemática de control de fechas
         if (streak.getLastActivityDate() == null) {
             streak.setCurrentStreak(1);
             streak.setMaxStreak(1);
