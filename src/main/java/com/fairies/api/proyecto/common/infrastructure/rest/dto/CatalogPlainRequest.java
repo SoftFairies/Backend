@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record CatalogPlainRequest(
-        @NotBlank(message = "El name es obligatorio")
+
+        @NotBlank(message = "El nombre es obligatorio")
         String name,
+
         String description
 ) {}

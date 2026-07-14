@@ -5,8 +5,13 @@ import java.util.Set;
 
 public record CreateBookRequest(
         String isbn,
-        @NotBlank String title,
+
+        @NotBlank(message = "El título es obligatorio")
+        String title,
+
         Set<EntityReferenceRequest> authors,
+
         Set<EntityReferenceRequest> genres,
+
         String cover
 ) {}

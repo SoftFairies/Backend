@@ -6,7 +6,6 @@ public record UserBadgeResponse(
         Long badgeId,
         String name,
         String description,
-        String url,
-        LocalDateTime earnedAt
+        String url
 ) {
 }

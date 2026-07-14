@@ -5,10 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record CatalogMultipartRequest(
+
         @NotNull(message = "El archivo de imagen es obligatorio")
         MultipartFile file,
-        @NotBlank(message = "El name es obligatorio")
+
+        @NotBlank(message = "El nombre es obligatorio")
         String name,
+
         String description
 ) {}
 

@@ -1,4 +1,3 @@
-// feat(mailbox): add query to fetch the last recommendation sent by a user
 package com.fairies.api.proyecto.modules.mailbox.infrastructure.persistence;
 
 import com.fairies.api.proyecto.modules.mailbox.domain.model.RecommendationContent;

@@ -1,4 +1,3 @@
-// modules/recommendation/infrastructure/rest/mapper/RecommendationMapper.java
 package com.fairies.api.proyecto.modules.recommendation.infrastructure.rest.mapper;
 
 import com.fairies.api.proyecto.modules.recommendation.domain.model.UserPreference;
