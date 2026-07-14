@@ -20,10 +20,10 @@ public class OpenApiConfig {
             ApiResponses responses = operation.getResponses();
             Method method = handlerMethod.getMethod();
 
-            // 1. Errores universales para cualquier endpoint
-            responses.addApiResponse("401", new ApiResponse().description("Unauthorized - No autenticado"));
-            responses.addApiResponse("403", new ApiResponse().description("Forbidden - Sin permisos necesarios"));
-            responses.addApiResponse("500", new ApiResponse().description("Internal Server Error - Error inesperado"));
+            // 1. Errores universales (presentes en todos los endpoints)
+            responses.addApiResponse("401", new ApiResponse().description("No autenticado"));
+            responses.addApiResponse("403", new ApiResponse().description("Sin permisos necesarios"));
+            responses.addApiResponse("500", new ApiResponse().description("Error interno del servidor"));
 
             // 2. Detección de tipo de operación
             boolean isRead = method.isAnnotationPresent(GetMapping.class);
@@ -31,14 +31,14 @@ public class OpenApiConfig {
                     method.isAnnotationPresent(PutMapping.class) ||
                     method.isAnnotationPresent(DeleteMapping.class);
 
-            // 3. Aplicación inteligente de errores
             if (isRead || isWrite) {
-                responses.addApiResponse("404", new ApiResponse().description("Not Found - Recurso no encontrado"));
+                responses.addApiResponse("404", new ApiResponse().description("Recurso no encontrado"));
             }
 
             if (isWrite) {
-                responses.addApiResponse("400", new ApiResponse().description("Bad Request - Errores de validación o formato"));
-                responses.addApiResponse("409", new ApiResponse().description("Conflict - Violación de integridad de datos"));
+                responses.addApiResponse("400", new ApiResponse().description("Solicitud inválida o errores de validación"));
+                responses.addApiResponse("409", new ApiResponse().description("Conflicto de estado o integridad"));
+                responses.addApiResponse("422", new ApiResponse().description("Violación de regla de negocio"));
             }
 
             return operation;
