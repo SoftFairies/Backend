@@ -4,6 +4,7 @@ import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNot
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ public class DeleteUserUseCase {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public void execute(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");

@@ -5,18 +5,17 @@ import com.fairies.api.proyecto.modules.format.domain.model.Format;
 import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.dto.FormatResponse;
 import com.fairies.api.proyecto.modules.format.infrastructure.rest.mapper.FormatMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@RequiredArgsConstructor
 public class AddFormatUseCase {
     private final FormatRepository repository;
     private final FormatMapper mapper;
 
-    public AddFormatUseCase(FormatRepository repository, FormatMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
+    @Transactional
     public FormatResponse execute(CatalogPlainRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("La petición no puede ser nula.");

@@ -6,6 +6,7 @@ import com.fairies.api.proyecto.modules.user.domain.model.User;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class AddUserUseCase {
     private final RoleRepository roleRepository;
     private final PasswordHasher passwordHasher;
 
+    @Transactional
     public User execute(User newUser) {
         if (newUser == null || newUser.getEmail() == null || newUser.getEmail().isBlank()) {
             throw new IllegalArgumentException("Los datos de usuario son obligatorios.");

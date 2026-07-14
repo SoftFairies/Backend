@@ -1,6 +1,5 @@
 package com.fairies.api.proyecto.modules.mailbox.application;
 
-import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
 import com.fairies.api.proyecto.modules.gamification.application.AwardBadgeUseCase;
 import com.fairies.api.proyecto.modules.mailbox.domain.model.RecommendationContent;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.UUID;
 
 @Component
@@ -24,18 +22,17 @@ public class SendLetterUseCase {
 
     @Transactional
     public void execute(UUID senderId, UUID bookId, String contentText) {
-        Book book = bookRepository.getById(bookId);
-        contentRepository.findByBookIdAndSenderIdAndContent(bookId, senderId, contentText)
-                .orElseGet(() -> contentRepository.save(
-                        RecommendationContent.builder()
-                                .book(book)
-                                .senderId(senderId)
-                                .content(contentText)
-                                .build()
-                ));
+        contentRepository.save(RecommendationContent.builder()
+                .book(bookRepository.getById(bookId))
+                .senderId(senderId)
+                .content(contentText)
+                .build());
 
         if (senderId != null) {
-            awardBadgeUseCase.execute(senderId, 3L);
+            long count = contentRepository.countBySenderId(senderId);
+            if (count == 1) {
+                awardBadgeUseCase.execute(senderId, 3L);
+            }
             eventPublisher.publishEvent(new StreakTriggerEvent(senderId));
         }
     }

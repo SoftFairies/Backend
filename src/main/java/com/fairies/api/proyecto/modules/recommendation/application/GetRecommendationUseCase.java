@@ -21,39 +21,29 @@ public class GetRecommendationUseCase {
 
     @Transactional(readOnly = true)
     public List<Book> execute(UUID userId) {
-        var pref = prefRepo.findByUserId(userId).orElseThrow();
+        var pref = prefRepo.findByUserId(userId).orElse(null);
 
-        // 1. Obtenemos los 20 candidatos por género (DB)
-        List<Book> candidates = bookRepo.findGenreMatches(
-                pref.getGenres(),
-                userId,
-                PageRequest.of(0, 20)
-        );
+        if (pref == null || pref.getGenres() == null || pref.getGenres().isEmpty()) {
+            return bookRepo.findAll(PageRequest.of(0, 5)).getContent();
+        }
+
+        List<Long> genreIds = pref.getGenres().stream().map(g -> g.getId()).toList();
+
+        List<Book> candidates = bookRepo.findGenreMatches(genreIds, userId, PageRequest.of(0, 20));
 
         if (candidates.isEmpty()) {
-            return bookRepo.findAll(PageRequest.of(0, 5)).getContent(); // Fallback total
+            return bookRepo.findAll(PageRequest.of(0, 5)).getContent();
         }
 
-        // 2. Obtenemos el formato favorito del usuario
-        List<UUID> topFormatIds = libRepo.findMostUsedFormatIds(userId, PageRequest.of(0, 1));
+        List<Long> topFormatIds = libRepo.findMostUsedFormatIds(userId, PageRequest.of(0, 1));
 
         if (topFormatIds.isEmpty()) {
-            return candidates.stream().limit(5).toList(); // No hay info de formato, regresamos géneros
+            return candidates.stream().limit(5).toList();
         }
 
-        UUID preferredFormatId = topFormatIds.get(0);
-
-        // 3. "Hacemos el join" (Priorizamos los que coinciden con el formato favorito)
-        // Buscamos libros que YA han sido leídos en ese formato por otros usuarios (o el mismo)
-        // Si no existen en librería, se mantienen al final de la lista.
-        return candidates.stream()
-                .sorted((b1, b2) -> {
-                    boolean match1 = libRepo.existsByBookIdAndFormatId(b1.getId(), preferredFormatId);
-                    boolean match2 = libRepo.existsByBookIdAndFormatId(b2.getId(), preferredFormatId);
-                    if (match1 && !match2) return -1;
-                    if (!match1 && match2) return 1;
-                    return 0;
-                })
+        List<UUID> candidateIds = candidates.stream().map(Book::getId).toList();
+        return bookRepo.findSortedByFormat(candidateIds, topFormatIds.get(0))
+                .stream()
                 .limit(5)
                 .toList();
     }

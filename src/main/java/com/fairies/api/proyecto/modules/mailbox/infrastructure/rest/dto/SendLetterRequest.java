@@ -1,4 +1,3 @@
-// refactor(mailbox): use java record for SendLetterRequest DTO
 package com.fairies.api.proyecto.modules.mailbox.infrastructure.rest.dto;
 
 import jakarta.validation.constraints.NotBlank;

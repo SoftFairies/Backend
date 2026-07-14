@@ -7,6 +7,7 @@ import com.fairies.api.proyecto.modules.readingStatus.domain.model.ReadingStatus
 import com.fairies.api.proyecto.modules.readingStatus.infrastructure.rest.dto.ReadingStatusResponse;
 import com.fairies.api.proyecto.modules.readingStatus.infrastructure.rest.mapper.ReadingStatusMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/reading-status")
+@RequiredArgsConstructor
 public class ReadingStatusRouting {
 
     private final AddReadingStatusUseCase addUseCase;
@@ -27,22 +29,6 @@ public class ReadingStatusRouting {
     private final UpdateReadingStatusUseCase updateUseCase;
     private final DeleteReadingStatusUseCase deleteUseCase;
     private final ReadingStatusMapper mapper;
-
-    public ReadingStatusRouting(
-            AddReadingStatusUseCase addUseCase,
-            GetAllReadingStatusUseCase getAllUseCase,
-            GetByIdReadingStatusUseCase getByIdUseCase,
-            UpdateReadingStatusUseCase updateUseCase,
-            DeleteReadingStatusUseCase deleteUseCase,
-            ReadingStatusMapper mapper
-    ) {
-        this.addUseCase = addUseCase;
-        this.getAllUseCase = getAllUseCase;
-        this.getByIdUseCase = getByIdUseCase;
-        this.updateUseCase = updateUseCase;
-        this.deleteUseCase = deleteUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     @Transactional

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
 @RequiredArgsConstructor
 public class AddLibraryUseCase {
 
@@ -26,29 +25,33 @@ public class AddLibraryUseCase {
     private final ReadingStatusRepository readingStatusRepository;
     private final FormatRepository formatRepository;
     private final BookMapper bookMapper;
-
     private final AwardBadgeUseCase awardBadgeUseCase;
 
+    @Transactional
     public UserLibrary execute(User user, AddLibraryEntryRequest request) {
         Book book = (request.bookId() != null)
                 ? bookRepository.findById(request.bookId()).orElseThrow()
                 : addBookUseCase.execute(bookMapper.toDomain(request.newBook()));
 
-        UserLibrary entry = UserLibrary.builder()
+        UserLibrary entry = libraryRepository.save(UserLibrary.builder()
                 .user(user)
                 .book(book)
                 .readingStatus(readingStatusRepository.findById(request.readingStatusId()).orElseThrow())
                 .format(formatRepository.findById(request.formatId()).orElseThrow())
-                .currentChapter(request.currentChapter() != null ? request.currentChapter() : 0)
-                .currentPage(request.currentPage() != null ? request.currentPage() : 0)
+                .currentChapter(0)
+                .currentPage(0)
+                .totalChapter(request.totalChapter() != null ? request.totalChapter() : 0)
+                .totalPage(request.totalPage() != null ? request.totalPage() : 0)
                 .isFavorite(request.isFavorite())
-                .build();
+                .build());
+
+        libraryRepository.flush();
 
         long bookCount = libraryRepository.countByUserId(user.getId());
         if (bookCount == 3) {
             awardBadgeUseCase.execute(user.getId(), 4L);
         }
 
-        return libraryRepository.save(entry);
+        return entry;
     }
 }

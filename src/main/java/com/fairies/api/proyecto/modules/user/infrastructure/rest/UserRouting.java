@@ -99,7 +99,6 @@ public class UserRouting {
         userMapper.updateFromRequest(request, userToUpdate);
 
         User updatedUser = updateUseCase.execute(userToUpdate, request.pictureId(), request.password());
-        System.out.println(updatedUser);
         return userMapper.toResponse(updatedUser);
     }
 

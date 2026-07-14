@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -49,6 +50,17 @@ public class UserLibrary {
     @Column(nullable = false)
     @Builder.Default
     private Integer currentPage = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer totalChapter = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer totalPage = 0;
+
+    @Column(name = "finished_at")
+    private LocalDate finishedAt;
 
     @Column(nullable = false)
     @Builder.Default

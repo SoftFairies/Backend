@@ -27,7 +27,6 @@ public class StreakRouting {
     ) {
         UUID userId = jwtService.getUserIdFromToken(authHeader);
 
-        // 2. Buscamos la racha y la devolvemos
         return getUserStreakUseCase.execute(userId)
                 .map(streakMapper::toResponse)
                 .map(ResponseEntity::ok)
