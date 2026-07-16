@@ -10,5 +10,6 @@ public record UserResponse(
         String roleName,
         Long pictureId,
         String pictureUrl,
+        Integer annualGoal,
         boolean active
 ) {}

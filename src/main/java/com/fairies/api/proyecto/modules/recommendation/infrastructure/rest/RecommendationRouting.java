@@ -55,8 +55,12 @@ public class RecommendationRouting {
     private void handleSave(String auth, RecommendationRequest request) {
         var userId = jwtService.getUserIdFromToken(auth);
         var user = userRepo.findById(userId).orElseThrow();
-        var formats = request.formatIds().stream().map(id -> formatRepo.findById(id).orElseThrow()).collect(Collectors.toSet());
-        var genres = request.genreIds().stream().map(id -> genderRepo.findById(id).orElseThrow()).collect(Collectors.toSet());
+        var formats = request.formatIds().stream()
+                .map(id -> formatRepo.findById(id).orElseThrow())
+                .collect(Collectors.toSet());
+        var genres = request.genreIds().stream()
+                .map(id -> genderRepo.findById(id).orElseThrow())
+                .collect(Collectors.toSet());
         saveUseCase.execute(user, formats, genres);
     }
 }

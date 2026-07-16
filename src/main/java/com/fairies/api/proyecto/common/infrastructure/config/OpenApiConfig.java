@@ -20,12 +20,10 @@ public class OpenApiConfig {
             ApiResponses responses = operation.getResponses();
             Method method = handlerMethod.getMethod();
 
-            // 1. Errores universales (presentes en todos los endpoints)
             responses.addApiResponse("401", new ApiResponse().description("No autenticado"));
             responses.addApiResponse("403", new ApiResponse().description("Sin permisos necesarios"));
             responses.addApiResponse("500", new ApiResponse().description("Error interno del servidor"));
 
-            // 2. Detección de tipo de operación
             boolean isRead = method.isAnnotationPresent(GetMapping.class);
             boolean isWrite = method.isAnnotationPresent(PostMapping.class) ||
                     method.isAnnotationPresent(PutMapping.class) ||
