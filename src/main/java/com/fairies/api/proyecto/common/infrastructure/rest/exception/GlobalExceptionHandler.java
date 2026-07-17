@@ -44,8 +44,30 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleMissingBody(Exception ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", "El cuerpo de la petición es requerido o inválido.", request);
+    public ResponseEntity<ErrorResponse> handleMissingBodyException(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
+
+        String message = "El cuerpo de la petición es requerido o tiene un formato inválido.";
+        String exceptionMsg = ex.getMessage();
+
+        if (exceptionMsg != null) {
+            if (exceptionMsg.contains("out of range of `int`") || exceptionMsg.contains("out of range of `long`")) {
+                message = "Valor numérico fuera de rango. El número excede el límite permitido.";
+            } else if (exceptionMsg.contains("Cannot deserialize")) {
+                message = "Tipo de dato incorrecto en el JSON.";
+            }
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                message,
+                request.getRequestURI(),
+                LocalDateTime.now(),
+                null
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
