@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.mailbox.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
 import com.fairies.api.proyecto.modules.gamification.application.AwardBadgeUseCase;
 import com.fairies.api.proyecto.modules.mailbox.domain.model.RecommendationContent;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 @Component
@@ -22,8 +24,11 @@ public class SendLetterUseCase {
 
     @Transactional
     public void execute(UUID senderId, UUID bookId, String contentText) {
+        var book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("El libro especificado no existe."));
+
         contentRepository.save(RecommendationContent.builder()
-                .book(bookRepository.getById(bookId))
+                .book(book)
                 .senderId(senderId)
                 .content(contentText)
                 .build());

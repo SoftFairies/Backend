@@ -13,11 +13,9 @@ import java.util.Optional;
 @Repository
 public interface CuriosityRepository extends JpaRepository<Curiosity, Long> {
 
-    // Consulta 1: Cuando el usuario sí tiene géneros favoritos establecidos
     @Query(value = "SELECT * FROM curiosities WHERE genre IN (:genres) ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<Curiosity> findRandomCuriosityByGenres(@Param("genres") List<String> genres);
 
-    // Consulta 2: Cuando la lista de géneros está vacía y queremos cualquier curiosidad general
     @Query(value = "SELECT * FROM curiosities ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     Optional<Curiosity> findRandomCuriosity();
 }

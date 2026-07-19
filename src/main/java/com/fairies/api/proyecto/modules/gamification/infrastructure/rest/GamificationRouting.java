@@ -8,10 +8,7 @@ import com.fairies.api.proyecto.modules.gamification.infrastructure.rest.mapper.
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,15 +22,14 @@ public class GamificationRouting {
     private final JwtService jwtService;
     private final UserBadgeMapper userBadgeMapper;
 
-    @Operation(summary = "Obtener insignias del usuario")
     @GetMapping("/me/badges")
+    @Operation(summary = "Obtiene la lista de insignias ganadas por el usuario autenticado")
     public ResponseEntity<List<UserBadgeResponse>> getMyBadges(@RequestHeader("Authorization") String authHeader) {
         UUID authenticatedUserId = jwtService.getUserIdFromToken(authHeader);
         List<UserBadge> domainBadges = getUserBadgesUseCase.execute(authenticatedUserId);
         List<UserBadgeResponse> response = domainBadges.stream()
                 .map(userBadgeMapper::toResponse)
                 .toList();
-
         return ResponseEntity.ok(response);
     }
 }

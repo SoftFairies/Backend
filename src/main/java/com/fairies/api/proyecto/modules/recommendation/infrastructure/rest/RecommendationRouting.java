@@ -9,9 +9,11 @@ import com.fairies.api.proyecto.modules.recommendation.application.*;
 import com.fairies.api.proyecto.modules.recommendation.infrastructure.rest.dto.*;
 import com.fairies.api.proyecto.modules.recommendation.infrastructure.rest.mapper.RecommendationMapper;
 import com.fairies.api.proyecto.modules.user.infrastructure.persistence.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1/preferences")
 @RequiredArgsConstructor
 public class RecommendationRouting {
+
     private final SavePreferenceUseCase saveUseCase;
     private final GetRecommendationUseCase recUseCase;
     private final GetPreferenceUseCase getPrefUseCase;
@@ -30,16 +33,19 @@ public class RecommendationRouting {
     private final RecommendationMapper recMapper;
 
     @PostMapping
+    @Operation(summary = "Guarda las preferencias de lectura (géneros y formatos) para el usuario autenticado")
     public void create(@RequestHeader("Authorization") String auth, @RequestBody RecommendationRequest req) {
         handleSave(auth, req);
     }
 
     @PutMapping
+    @Operation(summary = "Actualiza las preferencias de lectura del usuario autenticado")
     public void update(@RequestHeader("Authorization") String auth, @RequestBody RecommendationRequest req) {
         handleSave(auth, req);
     }
 
     @GetMapping
+    @Operation(summary = "Obtiene los formatos y géneros favoritos guardados por el usuario autenticado")
     public ResponseEntity<RecommendationResponse> getMyPreferences(@RequestHeader("Authorization") String auth) {
         var userId = jwtService.getUserIdFromToken(auth);
         var pref = getPrefUseCase.execute(userId);
@@ -47,6 +53,7 @@ public class RecommendationRouting {
     }
 
     @GetMapping("/recommendations")
+    @Operation(summary = "Genera una lista personalizada de hasta 5 libros recomendados basándose en los géneros favoritos y formato más leído del usuario")
     public List<BookResponse> getRecommendations(@RequestHeader("Authorization") String auth) {
         var userId = jwtService.getUserIdFromToken(auth);
         return recUseCase.execute(userId).stream().map(bookMapper::toResponse).toList();

@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,41 +24,23 @@ public class GetReceivedLettersUseCase {
     @Transactional
     public List<Letter> execute(UUID receiverId) {
         Optional<RecommendationContent> lastSentOpt = contentRepository.findFirstBySenderIdOrderByIdDesc(receiverId);
-
         if (lastSentOpt.isEmpty()) {
             throw new IllegalStateException("Para poder abrir el buzón, primero debes enviar tu primera carta recomendando un libro.");
         }
 
-        long lettersClaimedCount = letterRepository.countByReceiverId(receiverId);
+        List<RecommendationContent> availableContents = contentRepository.findAvailableForReceiver(receiverId);
 
-        boolean entitledToNewLetter = (lettersClaimedCount == 0);
+        if (!availableContents.isEmpty()) {
+            Collections.shuffle(availableContents);
+            RecommendationContent selectedContent = availableContents.get(0);
 
-        if (lettersClaimedCount > 0) {
-            entitledToNewLetter = true;
-        }
+            Letter newLetter = Letter.builder()
+                    .receiverId(receiverId)
+                    .recommendationContent(selectedContent)
+                    .claimedAt(LocalDateTime.now())
+                    .build();
 
-        if (entitledToNewLetter) {
-            List<Long> alreadyReadIds = letterRepository.findByReceiverIdWithContent(receiverId).stream()
-                    .map(l -> l.getRecommendationContent().getId())
-                    .collect(Collectors.toList());
-
-            List<RecommendationContent> availableContents = contentRepository.findAll().stream()
-                    .filter(c -> !c.getSenderId().equals(receiverId))
-                    .filter(c -> !alreadyReadIds.contains(c.getId()))
-                    .collect(Collectors.toList());
-
-            if (!availableContents.isEmpty()) {
-                Collections.shuffle(availableContents);
-                RecommendationContent selectedContent = availableContents.get(0);
-
-                Letter newLetter = Letter.builder()
-                        .receiverId(receiverId)
-                        .recommendationContent(selectedContent)
-                        .claimedAt(LocalDateTime.now())
-                        .build();
-
-                letterRepository.save(newLetter);
-            }
+            letterRepository.save(newLetter);
         }
 
         return letterRepository.findByReceiverIdWithContent(receiverId);

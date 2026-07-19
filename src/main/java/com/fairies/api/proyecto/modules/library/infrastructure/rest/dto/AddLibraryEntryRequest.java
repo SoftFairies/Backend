@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public record AddLibraryEntryRequest(
 
-        @NotNull(message = "El ID del libro es obligatorio")
         UUID bookId,
 
         CreateBookRequest newBook,

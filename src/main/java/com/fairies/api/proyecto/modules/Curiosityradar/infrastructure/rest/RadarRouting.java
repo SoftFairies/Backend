@@ -5,6 +5,7 @@ import com.fairies.api.proyecto.modules.Curiosityradar.aplication.GetPersonalize
 import com.fairies.api.proyecto.modules.Curiosityradar.domain.model.Curiosity;
 import com.fairies.api.proyecto.modules.Curiosityradar.infrastructure.rest.dto.CuriosityResponse;
 import com.fairies.api.proyecto.modules.Curiosityradar.infrastructure.rest.mapper.CuriosityMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,8 @@ public class RadarRouting {
     private final CuriosityMapper mapper;
 
     @GetMapping("/random")
-    @PreAuthorize("isAuthenticated()") // Permite que cualquier lector autenticado consulte el radar
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Obtiene una curiosidad aleatoria personalizada según los géneros literarios favoritos del usuario")
     public ResponseEntity<CuriosityResponse> getRandomCuriosity(
             @RequestHeader("Authorization") String authHeader
     ) {
