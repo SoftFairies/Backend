@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record SendLetterRequest(
+
         @NotNull(message = "El ID del libro es obligatorio")
         UUID bookId,
 

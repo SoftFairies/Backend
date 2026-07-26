@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.library.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.library.domain.model.LibraryNote;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryNoteRepository;
@@ -14,12 +15,13 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class AddNoteUseCase {
+
     private final LibraryNoteRepository noteRepository;
     private final LibraryRepository libraryRepository;
 
     @Transactional
     public LibraryNote execute(UUID libraryId, LibraryNoteRequest request) {
-        UserLibrary library = libraryRepository.findById(libraryId).orElseThrow();
+        UserLibrary library = libraryRepository.findById(libraryId).orElseThrow(() -> new ResourceNotFoundException("Registro de biblioteca no encontrado"));
 
         LibraryNote note = LibraryNote.builder()
                 .content(request.content())
@@ -27,7 +29,6 @@ public class AddNoteUseCase {
                 .page(request.page())
                 .userLibrary(library)
                 .build();
-
         return noteRepository.save(note);
     }
 }

@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.library.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.format.infrastructure.persistence.FormatRepository;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryRepository;
@@ -25,20 +26,18 @@ public class UpdateLibraryUseCase {
     public UserLibrary execute(UUID userId, UUID id, UpdateLibraryEntryRequest request) {
         UserLibrary entry = libraryRepository.findById(id)
                 .filter(lib -> lib.getUser().getId().equals(userId))
-                .orElseThrow(() -> new IllegalArgumentException("Registro de biblioteca no encontrado o no autorizado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de biblioteca no encontrado o no autorizado"));
 
         if (request.formatId() != null) {
             entry.setFormat(formatRepository.findById(request.formatId())
-                    .orElseThrow(() -> new IllegalArgumentException("Formato no encontrado")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Formato no encontrado")));
         }
 
         libraryMapper.updateFromRequest(request, entry);
 
         if (request.readingStatusId() != null) {
-            entry.setReadingStatus(statusRepository.findById(request.readingStatusId())
-                    .orElseThrow(() -> new IllegalArgumentException("Estado de lectura no encontrado")));
+            entry.setReadingStatus(statusRepository.findById(request.readingStatusId()).orElseThrow(() -> new ResourceNotFoundException("Estado de lectura no encontrado")));
         }
-
         return libraryRepository.save(entry);
     }
 }
