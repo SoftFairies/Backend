@@ -34,31 +34,49 @@ public class AddReadingSessionUseCase {
                 .filter(lib -> lib.getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Library not found."));
 
+        if (userLibrary.getCurrentChapter() + request.chaptersRead() > userLibrary.getTotalChapter()) {
+            throw new IllegalArgumentException("Los capítulos leídos exceden el total del libro.");
+        }
+
+        if (userLibrary.getCurrentPage() + request.pagesRead() > userLibrary.getTotalPage()) {
+            throw new IllegalArgumentException("Las páginas leídas exceden el total del libro.");
+        }
+
         userLibrary.setCurrentPage(userLibrary.getCurrentPage() + request.pagesRead());
         userLibrary.setCurrentChapter(userLibrary.getCurrentChapter() + request.chaptersRead());
 
         if (userLibrary.getCurrentPage() >= userLibrary.getTotalPage() ||
                 userLibrary.getCurrentChapter() >= userLibrary.getTotalChapter()) {
 
-            var completedStatus = readingStatusRepository.findById(3L)
-                    .orElseThrow(() -> new ResourceNotFoundException("Status 'Completed' not found."));
+            var completedStatus = readingStatusRepository.findById(2L)
+                    .orElseThrow(() -> new ResourceNotFoundException("Status not found."));
 
             userLibrary.setReadingStatus(completedStatus);
             userLibrary.setFinishedAt(LocalDate.now());
         }
 
-
         boolean isFlagged = false;
-        String flagReason = null;
+        StringBuilder reasonBuilder = new StringBuilder();
 
         if (request.secondsRead() > 0) {
             double pagesPerSecond = (double) request.pagesRead() / request.secondsRead();
+            double chaptersPerSecond = (double) request.chaptersRead() / request.secondsRead();
 
-            if (pagesPerSecond > 5.0 ) {
+            if (pagesPerSecond > 5.0) {
                 isFlagged = true;
-                flagReason = "Velocidad inhumana: " + String.format("%.2f", pagesPerSecond) + " pág/seg";
+                reasonBuilder.append(String.format("%.1f pág/seg", pagesPerSecond));
+            }
+
+            if (chaptersPerSecond > 1.0) {
+                isFlagged = true;
+                if (!reasonBuilder.isEmpty()) {
+                    reasonBuilder.append(" y ");
+                }
+                reasonBuilder.append(String.format("%.1f cap/seg", chaptersPerSecond));
             }
         }
+
+        String flagReason = isFlagged ? reasonBuilder.toString() : null;
 
         ReadingSession session = ReadingSession.builder()
                 .userLibrary(userLibrary)
@@ -75,7 +93,6 @@ public class AddReadingSessionUseCase {
         sessionRepository.flush();
 
         if (sessionRepository.countByUserLibrary_User_Id(userId) == 1) {
-
             awardBadgeUseCase.execute(userId, 5L);
         }
 
