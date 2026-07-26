@@ -8,5 +8,4 @@ public record UserBadgeResponse(
         String description,
         String url,
         LocalDateTime earnedAt
-) {
-}
+) {}

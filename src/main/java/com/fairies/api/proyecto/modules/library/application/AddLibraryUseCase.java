@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.library.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.book.application.AddBookUseCase;
 import com.fairies.api.proyecto.modules.book.domain.model.Book;
 import com.fairies.api.proyecto.modules.book.infrastructure.persistence.BookRepository;
@@ -30,14 +31,15 @@ public class AddLibraryUseCase {
     @Transactional
     public UserLibrary execute(User user, AddLibraryEntryRequest request) {
         Book book = (request.bookId() != null)
-                ? bookRepository.findById(request.bookId()).orElseThrow()
+                ? bookRepository.findById(request.bookId())
+                .orElseThrow(() -> new ResourceNotFoundException("El libro especificado no existe en el catálogo"))
                 : addBookUseCase.execute(bookMapper.toDomain(request.newBook()));
 
         UserLibrary entry = libraryRepository.save(UserLibrary.builder()
                 .user(user)
                 .book(book)
-                .readingStatus(readingStatusRepository.findById(request.readingStatusId()).orElseThrow())
-                .format(formatRepository.findById(request.formatId()).orElseThrow())
+                .readingStatus(readingStatusRepository.findById(request.readingStatusId()).orElseThrow(() -> new ResourceNotFoundException("Estado de lectura no encontrado")))
+                .format(formatRepository.findById(request.formatId()).orElseThrow(() -> new ResourceNotFoundException("Formato de lectura no encontrado")))
                 .currentChapter(0)
                 .currentPage(0)
                 .totalChapter(request.totalChapter() != null ? request.totalChapter() : 0)
@@ -46,12 +48,10 @@ public class AddLibraryUseCase {
                 .build());
 
         libraryRepository.flush();
-
         long bookCount = libraryRepository.countByUserId(user.getId());
         if (bookCount == 3) {
             awardBadgeUseCase.execute(user.getId(), 4L);
         }
-
         return entry;
     }
 }

@@ -1,5 +1,6 @@
 package com.fairies.api.proyecto.modules.library.application;
 
+import com.fairies.api.proyecto.common.infrastructure.rest.exception.ResourceNotFoundException;
 import com.fairies.api.proyecto.modules.library.domain.model.UserLibrary;
 import com.fairies.api.proyecto.modules.library.infrastructure.persistence.LibraryRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,6 @@ public class GetByIdLibraryUseCase {
     public UserLibrary execute(UUID libraryId, UUID userId) {
         return libraryRepository.findById(libraryId)
                 .filter(lib -> lib.getUser().getId().equals(userId))
-                .orElseThrow(() -> new IllegalArgumentException("Registro de biblioteca no encontrado o no autorizado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de biblioteca no encontrado o no autorizado"));
     }
 }

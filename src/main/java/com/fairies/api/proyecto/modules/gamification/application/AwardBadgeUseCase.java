@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwardBadgeUseCase {
@@ -35,7 +34,6 @@ public class AwardBadgeUseCase {
                     .user(user)
                     .badge(badge)
                     .build());
-            log.info("Insignia {} guardada para usuario {}", badgeId, userId);
         }
     }
 }
