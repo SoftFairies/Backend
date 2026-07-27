@@ -39,6 +39,7 @@ public class Author {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean deleted = false;
 
     private LocalDateTime deletedAt;
