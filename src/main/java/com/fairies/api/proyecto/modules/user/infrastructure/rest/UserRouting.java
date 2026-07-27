@@ -48,7 +48,8 @@ public class UserRouting {
                 savedUser.getId(),
                 savedUser.getEmail(),
                 savedUser.getRole().getName(),
-                token
+                token,
+                false
         );
     }
 

@@ -57,7 +57,18 @@ public class User {
     @Column(name = "annual_goal", nullable = true)
     private Integer annualGoal;
 
+    @Column(name = "two_factor_enabled", nullable = false)
+    @Builder.Default
+    private boolean twoFactorEnabled = false;
+
+    @Column(name = "two_factor_code", length = 6)
+    private String twoFactorCode;
+
+    @Column(name = "two_factor_expires_at")
+    private LocalDateTime twoFactorCodeExpiresAt;
+
     @Column(nullable = false)
+    @Builder.Default
     private boolean deleted = false;
 
     private LocalDateTime deletedAt;

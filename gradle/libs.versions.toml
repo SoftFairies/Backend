@@ -40,6 +40,9 @@ jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 cloudinary-core = { group = "com.cloudinary", name = "cloudinary-core", version.ref = "cloudinary" }
 cloudinary-http = { group = "com.cloudinary", name = "cloudinary-http44", version.ref = "cloudinary" }
 
+#2FA
+spring-boot-starter-mail = { group = "org.springframework.boot", name = "spring-boot-starter-mail", version.ref = "springBoot" }
+
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 dependency-management = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }

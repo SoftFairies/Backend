@@ -52,6 +52,9 @@ dependencies {
 	implementation(libs.cloudinary.core)
 	implementation(libs.cloudinary.http)
 
+	//2FA
+	implementation libs.spring.boot.starter.mail
+
 	// Dependencias para Pruebas (Testing)
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly libs.lombok

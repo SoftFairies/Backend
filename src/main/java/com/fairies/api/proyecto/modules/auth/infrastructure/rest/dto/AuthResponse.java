@@ -6,5 +6,6 @@ public record AuthResponse(
         UUID id,
         String email,
         String role,
-        String token
+        String token,
+        boolean requiresTwoFactor
 ) {}
