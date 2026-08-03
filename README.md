@@ -14,6 +14,7 @@ Backend desarrollado en **Java** utilizando **Spring Boot**, diseñado bajo una 
 * **Gestión de Archivos/Multimedia:** Cloudinary
 * **Herramientas de Mapeo y Utilidades:** MapStruct, Lombok
 * **Gestor de Dependencias:** Gradle
+* **Inteligencia Artificial:** Gemini Pro (Integrado como parte del stack tecnológico)
 
 ---
 
@@ -92,6 +93,13 @@ Una vez que la aplicación esté ejecutándose, puedes explorar y probar todos l
 **`http://localhost:8080/swagger-ui/index.html`**
 
 ---
+## 5. Integración con Inteligencia Artificial (Gemini Pro)
+
+El desarrollo de este backend se apoyó en **Gemini Pro** como herramienta de asistencia para mejorar la calidad y eficiencia del código. Su integración directa en el flujo de trabajo abarcó las siguientes áreas:
+
+* **Lógica de Negocio:** Asistencia en el análisis, diseño y estructuración de la lógica interna para módulos complejos, específicamente en el sistema de **gamificación** (asignación de insignias) y el cálculo del seguimiento de **rachas de lectura** (streaks) e uso de una API externa.
+* **Estandarización de DTOs:** Redacción y revisión de los mensajes de validación y respuesta dentro de los Data Transfer Objects (DTOs), asegurando que la comunicación de la API (mensajes de error, éxito y validaciones) mantenga un tono uniforme, claro y profesional.
+* **Optimización de Procesos:** Apoyo en el análisis de código para la refactorización de métodos, simplificación de algoritmos y mejora general del rendimiento dentro de los servicios de la aplicación.
 
 Este proyecto fue desarrollado con fines académicos para la **Universidad Politécnica de Chiapas** por el equipo de **SoftFairies**.
 
